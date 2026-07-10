@@ -5,14 +5,16 @@ import { toTmdbLanguage } from '@/i18n/tmdbLocale';
 import type { Locale, PaginatedResponse } from '@/types/common';
 import type { Genre, Media, MediaDetails } from '@/types/media';
 
-// Raw TMDB response shapes (snake_case), private to this module — normalized
-// to Media/MediaDetails below before leaving the api layer.
-type TmdbGenre = {
+// Raw TMDB response shapes (snake_case). Normalized to Media/MediaDetails
+// below before leaving the api layer; exported (alongside the normalizers
+// themselves) only so tests can exercise the normalization directly instead
+// of going through a mocked fetch + the full RTK Query request lifecycle.
+export type TmdbGenre = {
   id: number;
   name: string;
 };
 
-type TmdbMovieSummary = {
+export type TmdbMovieSummary = {
   id: number;
   title: string;
   poster_path: string | null;
@@ -20,7 +22,7 @@ type TmdbMovieSummary = {
   vote_count: number;
 };
 
-type TmdbTvSummary = {
+export type TmdbTvSummary = {
   id: number;
   name: string;
   poster_path: string | null;
@@ -28,26 +30,26 @@ type TmdbTvSummary = {
   vote_count: number;
 };
 
-type TmdbMovieDetails = TmdbMovieSummary & {
+export type TmdbMovieDetails = TmdbMovieSummary & {
   overview: string;
   genres: TmdbGenre[];
   release_date: string;
 };
 
-type TmdbTvDetails = TmdbTvSummary & {
+export type TmdbTvDetails = TmdbTvSummary & {
   overview: string;
   genres: TmdbGenre[];
   first_air_date: string;
 };
 
-type TmdbPaginatedResponse<T> = {
+export type TmdbPaginatedResponse<T> = {
   page: number;
   results: T[];
   total_pages: number;
   total_results: number;
 };
 
-const movieToMedia = (movie: TmdbMovieSummary): Media => ({
+export const movieToMedia = (movie: TmdbMovieSummary): Media => ({
   id: movie.id,
   mediaType: 'movie',
   title: movie.title,
@@ -56,7 +58,7 @@ const movieToMedia = (movie: TmdbMovieSummary): Media => ({
   voteCount: movie.vote_count,
 });
 
-const tvToMedia = (tv: TmdbTvSummary): Media => ({
+export const tvToMedia = (tv: TmdbTvSummary): Media => ({
   id: tv.id,
   mediaType: 'tv',
   title: tv.name,
@@ -65,7 +67,7 @@ const tvToMedia = (tv: TmdbTvSummary): Media => ({
   voteCount: tv.vote_count,
 });
 
-const toMediaDetails = (
+export const toMediaDetails = (
   media: Media,
   overview: string,
   genres: TmdbGenre[],
@@ -77,7 +79,7 @@ const toMediaDetails = (
   genres: genres.map((genre): Genre => ({ id: genre.id, name: genre.name })),
 });
 
-const toPaginatedMedia = <T>(
+export const toPaginatedMedia = <T>(
   response: TmdbPaginatedResponse<T>,
   toMedia: (item: T) => Media,
 ): PaginatedResponse<Media> => ({

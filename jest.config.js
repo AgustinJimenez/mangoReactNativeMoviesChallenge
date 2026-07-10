@@ -1,9 +1,11 @@
 module.exports = {
   preset: '@react-native/jest-preset',
-  // react-native-worklets (Reanimated 4's separate native-module package)
-  // ships a resolver that stops Jest from resolving its `.native.ts`
-  // variant, which tries to load the real native module and crashes.
-  resolver: 'react-native-worklets/jest/resolver.js',
+  // Composes @react-native/jest-preset's own resolver with
+  // react-native-worklets' (Reanimated 4's separate native-module package
+  // needs its `.native.ts` variant NOT resolved in tests, or it tries to
+  // load the real native module and crashes) — see jest/resolver.js for why
+  // this can't just be react-native-worklets/jest/resolver.js directly.
+  resolver: '<rootDir>/jest/resolver.js',
   setupFiles: ['react-native-gesture-handler/jestSetup'],
   moduleNameMapper: {
     '\\.css$': '<rootDir>/__mocks__/styleMock.js',
