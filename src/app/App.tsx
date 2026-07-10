@@ -5,7 +5,7 @@
  * @format
  */
 
-import './global.css';
+import '../global.css';
 
 import { StatusBar, Text, useColorScheme, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';

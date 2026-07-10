@@ -25,6 +25,7 @@ module.exports = {
     ],
     'import/no-default-export': 'error',
     'import/no-duplicates': 'error',
+    'import/no-unresolved': ['error', { ignore: ['^@env$'] }],
 
     // React
     'react/function-component-definition': [
@@ -115,7 +116,7 @@ module.exports = {
       },
     },
     {
-      files: ['ui/**/*.tsx'],
+      files: ['src/ui/**/*.tsx'],
       rules: {
         'max-lines-per-function': ['warn', { max: 80, skipBlankLines: true, skipComments: true }],
         'max-lines': ['warn', { max: 150, skipBlankLines: true, skipComments: true }],
@@ -150,7 +151,7 @@ module.exports = {
       },
     },
     {
-      files: ['__tests__/**', '**/*.test.{ts,tsx}'],
+      files: ['**/*.test.{ts,tsx}'],
       rules: {
         '@typescript-eslint/no-magic-numbers': 'off',
         'import/no-default-export': 'off',
