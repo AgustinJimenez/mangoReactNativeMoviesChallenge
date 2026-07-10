@@ -1,7 +1,20 @@
 {
+  "retry": "Reintentar",
   "errorBoundary": {
-    "title": "Algo salió mal",
-    "retry": "Reintentar"
+    "title": "Algo salió mal"
+  },
+  "errorState": {
+    "unauthorized": "Verificá tu API key de TMDB en el archivo .env",
+    "generic": "No pudimos cargar el contenido"
+  },
+  "loadingState": {
+    "message": "Cargando…"
+  },
+  "rating": {
+    "noVotes": "Sin votos"
+  },
+  "searchBar": {
+    "placeholder": "Buscar…"
   },
   "smokeTestPlaceholder": "Prueba de NativeWind"
 }

@@ -40,13 +40,28 @@ module.exports = {
     // Tailwind / NativeWind
     'tailwindcss/no-contradicting-classname': 'error',
 
+    // Accessibility — plugin:react-native-a11y/basic defaults everything to
+    // 'error'; downgraded to 'warn' so it's visible but not blocking (see
+    // docs/planning.md "Accesibilidad").
+    'react-native-a11y/has-accessibility-hint': 'warn',
+    'react-native-a11y/has-accessibility-props': 'warn',
+    'react-native-a11y/has-valid-accessibility-actions': 'warn',
+    'react-native-a11y/has-valid-accessibility-component-type': 'warn',
+    'react-native-a11y/has-valid-accessibility-descriptors': 'warn',
+    'react-native-a11y/has-valid-accessibility-role': 'warn',
+    'react-native-a11y/has-valid-accessibility-state': 'warn',
+    'react-native-a11y/has-valid-accessibility-states': 'warn',
+    'react-native-a11y/has-valid-accessibility-traits': 'warn',
+    'react-native-a11y/has-valid-accessibility-value': 'warn',
+    'react-native-a11y/no-nested-touchables': 'warn',
+
     // i18n — no hardcoded UI copy, route it through react-i18next instead
     'i18next/no-literal-string': [
       'warn',
       {
         markupOnly: true,
         ignoreAttribute: ['testID', 'accessibilityHint'],
-        ignore: ['^[A-Z_]+$', '^\\d+$', '^[\\s·|/→←•—]+$', '^https?://', '^\\.'],
+        ignore: ['^[A-Z_]+$', '^\\d+$', '^[\\s·|/→←•—★]+$', '^https?://', '^\\.'],
         ignoreCallee: [
           'console.log',
           'console.warn',
@@ -169,6 +184,16 @@ module.exports = {
       files: ['**/*.test.{ts,tsx}'],
       rules: {
         '@typescript-eslint/no-magic-numbers': 'off',
+        'import/no-default-export': 'off',
+      },
+    },
+    {
+      // Jest manual mocks for node_modules packages must be named exactly
+      // like the package they mock (e.g. __mocks__/expo-image.js) — that's
+      // not negotiable, so filename-case doesn't apply here.
+      files: ['__mocks__/**'],
+      rules: {
+        'unicorn/filename-case': 'off',
         'import/no-default-export': 'off',
       },
     },

@@ -8,6 +8,7 @@ module.exports = {
       '<rootDir>/node_modules/@react-native-async-storage/async-storage/lib/module/jest/AsyncStorageMock.js',
     '^react-native-localize$':
       '<rootDir>/node_modules/react-native-localize/dist/commonjs/extras/mock/jest.js',
+    '^expo-image$': '<rootDir>/__mocks__/expo-image.js',
   },
   transformIgnorePatterns: [
     'node_modules/(?!((jest-)?react-native|@react-native(-.*)?|@react-navigation|react-native-.*|nativewind|react-native-css-interop|expo(-.*)?|@expo(-.*)?|react-redux|redux-persist|immer|@reduxjs)/)',

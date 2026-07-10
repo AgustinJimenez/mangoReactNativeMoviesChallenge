@@ -1,7 +1,20 @@
 {
+  "retry": "Retry",
   "errorBoundary": {
-    "title": "Something went wrong",
-    "retry": "Retry"
+    "title": "Something went wrong"
+  },
+  "errorState": {
+    "unauthorized": "Check your TMDB API key in the .env file",
+    "generic": "We couldn't load this content"
+  },
+  "loadingState": {
+    "message": "Loading…"
+  },
+  "rating": {
+    "noVotes": "No votes"
+  },
+  "searchBar": {
+    "placeholder": "Search…"
   },
   "smokeTestPlaceholder": "NativeWind smoke test"
 }

@@ -43,7 +43,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             {i18next.t('errorBoundary.title')}
           </Text>
           <Text onPress={this.handleReset} className="text-base font-semibold text-blue-400">
-            {i18next.t('errorBoundary.retry')}
+            {i18next.t('retry')}
           </Text>
         </View>
       );
