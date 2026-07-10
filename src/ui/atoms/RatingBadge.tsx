@@ -1,6 +1,11 @@
+import { Ionicons } from '@expo/vector-icons';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
+
+import { colors } from '@/theme/tokens';
+
+const STAR_ICON_SIZE = 12;
 
 type RatingBadgeProps = {
   voteAverage: number;
@@ -14,7 +19,7 @@ export const RatingBadge = memo(({ voteAverage, voteCount }: RatingBadgeProps) =
 
   return (
     <View className="flex-row items-center gap-xs rounded-full bg-black/60 px-sm py-xs">
-      <Text className="text-xs font-bold text-primary">★</Text>
+      <Ionicons name="star" size={STAR_ICON_SIZE} color={colors.primary} />
       <Text className="text-xs font-bold text-text">{label}</Text>
     </View>
   );

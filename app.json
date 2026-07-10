@@ -1,5 +1,5 @@
 {
   "name": "MangoMovies",
   "displayName": "MangoMovies",
-  "plugins": ["expo-image"]
+  "plugins": ["expo-image", "expo-font"]
 }

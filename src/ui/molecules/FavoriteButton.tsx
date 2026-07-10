@@ -1,7 +1,7 @@
-import { cssInterop } from 'nativewind';
+import { Ionicons } from '@expo/vector-icons';
 import { memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, Text } from 'react-native';
+import { Pressable } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -11,14 +11,12 @@ import Animated, {
 
 import { useFavoriteActions } from '@/hooks/useFavoriteActions';
 import { useIsFavorite } from '@/hooks/useIsFavorite';
+import { colors } from '@/theme/tokens';
 import type { MediaType } from '@/types/common';
-
-// Same reasoning as expo-image/Poster.tsx: Reanimated's Animated.View isn't
-// one of the primitives NativeWind wraps automatically.
-cssInterop(Animated.View, { className: 'style' });
 
 const BOUNCE_SCALE = 1.3;
 const BASE_SCALE = 1;
+const ICON_SIZE = 18;
 
 type FavoriteButtonProps = {
   id: number;
@@ -35,8 +33,6 @@ export const FavoriteButton = memo(({ id, mediaType }: FavoriteButtonProps) => {
   const scale = useSharedValue(BASE_SCALE);
 
   const label = isFavorite ? t('favoriteButton.remove') : t('favoriteButton.add');
-  const iconClassName = isFavorite ? 'text-lg text-primary' : 'text-lg text-text';
-  const icon = isFavorite ? '★' : '☆';
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
@@ -56,7 +52,11 @@ export const FavoriteButton = memo(({ id, mediaType }: FavoriteButtonProps) => {
       className="size-10 items-center justify-center rounded-full bg-black/60"
     >
       <Animated.View style={animatedStyle}>
-        <Text className={iconClassName}>{icon}</Text>
+        <Ionicons
+          name={isFavorite ? 'star' : 'star-outline'}
+          size={ICON_SIZE}
+          color={isFavorite ? colors.primary : colors.text}
+        />
       </Animated.View>
     </Pressable>
   );

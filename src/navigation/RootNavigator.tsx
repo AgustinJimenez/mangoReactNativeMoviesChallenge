@@ -1,6 +1,6 @@
+import { Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useTranslation } from 'react-i18next';
-import { Text } from 'react-native';
 
 import { FavoritesStackNavigator } from '@/navigation/FavoritesStackNavigator';
 import { MoviesStackNavigator } from '@/navigation/MoviesStackNavigator';
@@ -9,20 +9,22 @@ import { TvStackNavigator } from '@/navigation/TvStackNavigator';
 import type { RootTabParamList } from '@/navigation/types';
 import { colors } from '@/theme/tokens';
 
-const TAB_ICON_FONT_SIZE = 20;
-
-type TabIconProps = { glyph: string; color: string };
-
-const TabIcon = ({ glyph, color }: TabIconProps) => (
-  <Text style={{ fontSize: TAB_ICON_FONT_SIZE, color }}>{glyph}</Text>
-);
+type TabIconProps = { color: string; size: number; focused: boolean };
 
 // Defined at module scope (not inline in Tab.Screen's options) so React
 // Navigation sees a stable component type across renders instead of
-// remounting the icon every time RootNavigator re-renders.
-const MoviesTabIcon = ({ color }: { color: string }) => <TabIcon glyph="🎬" color={color} />;
-const TvTabIcon = ({ color }: { color: string }) => <TabIcon glyph="📺" color={color} />;
-const FavoritesTabIcon = ({ color }: { color: string }) => <TabIcon glyph="⭐" color={color} />;
+// remounting the icon every time RootNavigator re-renders. Outline when
+// inactive, filled when focused — a common tab bar affordance for "which
+// section am I in".
+const MoviesTabIcon = ({ color, size, focused }: TabIconProps) => (
+  <Ionicons name={focused ? 'film' : 'film-outline'} size={size} color={color} />
+);
+const TvTabIcon = ({ color, size, focused }: TabIconProps) => (
+  <Ionicons name={focused ? 'tv' : 'tv-outline'} size={size} color={color} />
+);
+const FavoritesTabIcon = ({ color, size, focused }: TabIconProps) => (
+  <Ionicons name={focused ? 'star' : 'star-outline'} size={size} color={color} />
+);
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
 

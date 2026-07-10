@@ -15,6 +15,7 @@ module.exports = {
     '^react-native-localize$':
       '<rootDir>/node_modules/react-native-localize/dist/commonjs/extras/mock/jest.js',
     '^expo-image$': '<rootDir>/__mocks__/expo-image.js',
+    '^@expo/vector-icons$': '<rootDir>/__mocks__/vector-icons.js',
     '^@react-native-community/netinfo$':
       '<rootDir>/node_modules/@react-native-community/netinfo/jest/netinfo-mock.js',
   },
