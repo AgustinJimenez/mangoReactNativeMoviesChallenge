@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
 import type { Media } from '@/types/media';
@@ -10,7 +11,10 @@ type MediaListItemProps = {
   onPress: (media: Media) => void;
 };
 
-export const MediaListItem = ({ media, onPress }: MediaListItemProps) => {
+// Memoized: this is the FlatList row component for every media list in the
+// app. Callers must pass a stable `onPress` (useCallback) for this to pay
+// off — see MoviesListScreen/TvListScreen/FavoritesScreen.
+export const MediaListItem = memo(({ media, onPress }: MediaListItemProps) => {
   return (
     <Pressable
       onPress={() => onPress(media)}
@@ -30,4 +34,4 @@ export const MediaListItem = ({ media, onPress }: MediaListItemProps) => {
       <FavoriteButton id={media.id} mediaType={media.mediaType} />
     </Pressable>
   );
-};
+});

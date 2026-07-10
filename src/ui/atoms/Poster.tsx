@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import { cssInterop } from 'nativewind';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { Text, View } from 'react-native';
 
 import { buildPosterUrl } from '@/utils/image';
@@ -17,7 +17,10 @@ type PosterProps = {
   size: PosterSize;
 };
 
-export const Poster = ({ path, title, size }: PosterProps) => {
+// Memoized because it's rendered once per row in list/grid FlatLists — its
+// props are cheap to compare (two strings + a union), and re-rendering it
+// unnecessarily would re-run expo-image's layout/decode work per row.
+export const Poster = memo(({ path, title, size }: PosterProps) => {
   const [failedToLoad, setFailedToLoad] = useState(false);
 
   if (!path || failedToLoad) {
@@ -37,4 +40,4 @@ export const Poster = ({ path, title, size }: PosterProps) => {
       onError={() => setFailedToLoad(true)}
     />
   );
-};
+});

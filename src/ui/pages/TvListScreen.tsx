@@ -1,7 +1,8 @@
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { ListRenderItem } from 'react-native';
 
 import { useGetPopularTvQuery, useSearchTvQuery } from '@/api/tmdbApi';
 import { useActiveLocale } from '@/hooks/useActiveLocale';
@@ -14,6 +15,8 @@ import { ListTemplate } from '@/ui/templates/ListTemplate';
 import { getErrorStatus } from '@/utils/rtkQueryError';
 
 const INITIAL_PAGE = 1;
+
+const keyExtractor = (item: Media): string => String(item.id);
 
 export const TvListScreen = () => {
   const { t } = useTranslation();
@@ -32,26 +35,34 @@ export const TvListScreen = () => {
   const activeQuery = isSearching ? searchQuery : popularQuery;
   const { data, isLoading, isFetching, isError, error, refetch } = activeQuery;
 
-  const handleSearchChange = (text: string) => {
+  const handleSearchChange = useCallback((text: string) => {
     setSearch(text);
     setPage(INITIAL_PAGE);
-  };
+  }, []);
 
-  const handleEndReached = () => {
+  const handleEndReached = useCallback(() => {
     if (data && data.page < data.totalPages) {
       setPage(data.page + 1);
     }
-  };
+  }, [data]);
 
-  const handlePressMedia = (media: Media) => {
-    navigation.navigate(ROUTES.TV_DETAILS, { id: media.id });
-  };
+  const handlePressMedia = useCallback(
+    (media: Media) => {
+      navigation.navigate(ROUTES.TV_DETAILS, { id: media.id });
+    },
+    [navigation],
+  );
+
+  const renderItem: ListRenderItem<Media> = useCallback(
+    ({ item }) => <MediaListItem media={item} onPress={handlePressMedia} />,
+    [handlePressMedia],
+  );
 
   return (
     <ListTemplate
       data={data?.results}
-      keyExtractor={(item) => String(item.id)}
-      renderItem={({ item }) => <MediaListItem media={item} onPress={handlePressMedia} />}
+      keyExtractor={keyExtractor}
+      renderItem={renderItem}
       isLoading={isLoading}
       isFetching={isFetching}
       isError={isError}

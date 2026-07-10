@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
@@ -6,7 +7,8 @@ type RatingBadgeProps = {
   voteCount: number;
 };
 
-export const RatingBadge = ({ voteAverage, voteCount }: RatingBadgeProps) => {
+// Memoized: rendered once per row in list FlatLists, props are two numbers.
+export const RatingBadge = memo(({ voteAverage, voteCount }: RatingBadgeProps) => {
   const { t } = useTranslation();
   const label = voteCount > 0 ? voteAverage.toFixed(1) : t('rating.noVotes');
 
@@ -16,4 +18,4 @@ export const RatingBadge = ({ voteAverage, voteCount }: RatingBadgeProps) => {
       <Text className="text-xs font-bold text-text">{label}</Text>
     </View>
   );
-};
+});

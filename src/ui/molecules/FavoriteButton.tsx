@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, Text } from 'react-native';
 
@@ -10,7 +11,10 @@ type FavoriteButtonProps = {
   mediaType: MediaType;
 };
 
-export const FavoriteButton = ({ id, mediaType }: FavoriteButtonProps) => {
+// Memoized: rendered once per row in list FlatLists. Its own re-renders are
+// already scoped to this id (useIsFavorite's granular selector), but without
+// memo it would still re-render whenever its parent row does.
+export const FavoriteButton = memo(({ id, mediaType }: FavoriteButtonProps) => {
   const { t } = useTranslation();
   const isFavorite = useIsFavorite(id, mediaType);
   const { toggleFavorite } = useFavoriteActions();
@@ -29,4 +33,4 @@ export const FavoriteButton = ({ id, mediaType }: FavoriteButtonProps) => {
       <Text className={iconClassName}>{icon}</Text>
     </Pressable>
   );
-};
+});

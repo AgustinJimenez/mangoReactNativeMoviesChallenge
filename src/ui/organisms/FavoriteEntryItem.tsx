@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 import { useGetMovieDetailsQuery, useGetTvDetailsQuery } from '@/api/tmdbApi';
 import { useActiveLocale } from '@/hooks/useActiveLocale';
 import type { FavoriteEntry } from '@/store/favoritesSlice';
@@ -15,7 +17,12 @@ type FavoriteEntryItemProps = {
 // (e.g. deleted from TMDB) are silently dropped instead of showing an error
 // row, since the failure is per-item and the rest of the list is still
 // useful.
-export const FavoriteEntryItem = ({ entry, onPress }: FavoriteEntryItemProps) => {
+//
+// Memoized: FavoritesScreen's FlatList row. `entry` keeps a stable reference
+// across renders for unrelated rows (Redux only creates a new object for
+// entries that actually changed), so this pays off the same way
+// MediaListItem's memo does.
+export const FavoriteEntryItem = memo(({ entry, onPress }: FavoriteEntryItemProps) => {
   const language = useActiveLocale();
   const isMovie = entry.mediaType === 'movie';
   const movieQuery = useGetMovieDetailsQuery({ id: entry.id, language }, { skip: !isMovie });
@@ -27,4 +34,4 @@ export const FavoriteEntryItem = ({ entry, onPress }: FavoriteEntryItemProps) =>
   }
 
   return <MediaListItem media={media} onPress={onPress} />;
-};
+});
