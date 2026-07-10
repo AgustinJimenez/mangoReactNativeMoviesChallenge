@@ -40,8 +40,23 @@ module.exports = {
     // Tailwind / NativeWind
     'tailwindcss/no-contradicting-classname': 'error',
 
-    // i18n — off for now (react-i18next not wired up until a later step), turned on once it is
-    'i18next/no-literal-string': 'off',
+    // i18n — no hardcoded UI copy, route it through react-i18next instead
+    'i18next/no-literal-string': [
+      'warn',
+      {
+        markupOnly: true,
+        ignoreAttribute: ['testID', 'accessibilityHint'],
+        ignore: ['^[A-Z_]+$', '^\\d+$', '^[\\s·|/→←•—]+$', '^https?://', '^\\.'],
+        ignoreCallee: [
+          'console.log',
+          'console.warn',
+          'console.error',
+          'console.info',
+          'require',
+          'import',
+        ],
+      },
+    ],
 
     // File & function size limits
     'max-lines': ['warn', { max: 500, skipBlankLines: true, skipComments: true }],

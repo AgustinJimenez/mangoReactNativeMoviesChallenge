@@ -2,6 +2,8 @@ import { Component } from 'react';
 import type { ErrorInfo, ReactNode } from 'react';
 import { Text, View } from 'react-native';
 
+import { i18next } from '@/i18n';
+
 type ErrorBoundaryProps = {
   children: ReactNode;
 };
@@ -11,9 +13,12 @@ type ErrorBoundaryState = {
 };
 
 // Class component: getDerivedStateFromError/componentDidCatch have no hooks
-// equivalent yet. This is the outermost provider (see AppProviders) so it can
-// catch errors thrown anywhere else in the tree, including in the providers
-// themselves.
+// equivalent yet. This is the outermost provider (see AppProviders), placed
+// above I18nextProvider so it can catch errors thrown anywhere else in the
+// tree — including inside the providers themselves. Because of that, the
+// fallback below can't rely on the I18nextProvider React context (it may not
+// be mounted), so it reads directly from the i18next singleton instead of
+// using the useTranslation hook.
 export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   state: ErrorBoundaryState = { error: null };
 
@@ -34,9 +39,11 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       // TODO(step 8): swap this inline fallback for ui/molecules/ErrorState once it exists.
       return (
         <View className="flex-1 items-center justify-center gap-4 bg-slate-900 p-6">
-          <Text className="text-center text-lg font-bold text-white">Algo salió mal</Text>
+          <Text className="text-center text-lg font-bold text-white">
+            {i18next.t('errorBoundary.title')}
+          </Text>
           <Text onPress={this.handleReset} className="text-base font-semibold text-blue-400">
-            Reintentar
+            {i18next.t('errorBoundary.retry')}
           </Text>
         </View>
       );

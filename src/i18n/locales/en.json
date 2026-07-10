@@ -1,0 +1,7 @@
+{
+  "errorBoundary": {
+    "title": "Something went wrong",
+    "retry": "Retry"
+  },
+  "smokeTestPlaceholder": "NativeWind smoke test"
+}
