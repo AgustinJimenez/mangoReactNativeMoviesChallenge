@@ -21,6 +21,7 @@ export const MediaListItem = memo(({ media, onPress }: MediaListItemProps) => {
       onPress={() => onPress(media)}
       accessibilityRole="button"
       accessibilityLabel={media.title}
+      testID="media-list-item"
       className="flex-row items-center gap-md p-sm"
     >
       <View className="w-20">

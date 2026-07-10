@@ -1,0 +1,18 @@
+# Favorites a movie from the list, finds it on the Favorites tab, then
+# unfavorites it and verifies it disappears. Requires a valid
+# TMDB_ACCESS_TOKEN — see movies-list-and-search.yaml.
+appId: com.mango.moviesapp
+---
+- launchApp
+- assertVisible: 'Movies'
+- tapOn:
+    id: 'favorite-button'
+    index: 0
+- tapOn: 'Favorites'
+- assertVisible:
+    id: 'media-list-item'
+- tapOn:
+    id: 'favorite-button'
+    index: 0
+- assertNotVisible:
+    id: 'media-list-item'

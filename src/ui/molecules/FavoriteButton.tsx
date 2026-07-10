@@ -52,6 +52,7 @@ export const FavoriteButton = memo(({ id, mediaType }: FavoriteButtonProps) => {
       onPress={handlePress}
       accessibilityRole="button"
       accessibilityLabel={label}
+      testID="favorite-button"
       className="size-10 items-center justify-center rounded-full bg-black/60"
     >
       <Animated.View style={animatedStyle}>

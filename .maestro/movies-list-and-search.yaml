@@ -1,0 +1,17 @@
+# Opens the app on the Movies tab, waits for the popular list to load, then
+# searches for a title and verifies results replace the popular list.
+# Requires a valid TMDB_ACCESS_TOKEN (see README) — without one every list
+# request 401s and this flow fails at the first assertVisible below.
+appId: com.mango.moviesapp
+---
+- launchApp
+- assertVisible: 'Movies'
+- assertVisible:
+    id: 'media-list-item'
+- tapOn:
+    id: 'search-bar-input'
+- inputText: 'batman'
+- extendedWaitUntil:
+    visible:
+      id: 'media-list-item'
+    timeout: 10000

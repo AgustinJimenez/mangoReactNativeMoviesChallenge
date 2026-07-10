@@ -1,0 +1,11 @@
+# Switches language via LanguageSwitcher and verifies known UI text changes
+# accordingly, then switches back. Doesn't touch the TMDB API, so unlike the
+# other flows this one passes regardless of TMDB_ACCESS_TOKEN.
+appId: com.mango.moviesapp
+---
+- launchApp
+- assertVisible: 'Movies'
+- tapOn: 'ES'
+- assertVisible: 'Películas'
+- tapOn: 'EN'
+- assertVisible: 'Movies'

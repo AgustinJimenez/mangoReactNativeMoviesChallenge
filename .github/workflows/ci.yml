@@ -1,0 +1,80 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint-and-typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test -- --ci
+
+  # Separated from lint/unit-tests: booting an emulator is the slowest and
+  # most infra-flaky part of CI, so a failure here shouldn't block the fast
+  # lint/typecheck/unit signal above. Requires a TMDB_ACCESS_TOKEN repo
+  # secret (see README) to exercise the flows that hit the real TMDB API —
+  # without it, only language-switch.yaml runs (it doesn't call TMDB at
+  # all), so a fork without the secret still gets a green, if partial, run
+  # instead of a permanently red one.
+  e2e:
+    runs-on: ubuntu-latest
+    needs: [lint-and-typecheck, unit-tests]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Write .env
+        run: echo "TMDB_ACCESS_TOKEN=${{ secrets.TMDB_ACCESS_TOKEN }}" > .env
+      - name: Build debug APK
+        run: cd android && ./gradlew assembleDebug
+      - name: Install Maestro CLI
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+      - name: Enable KVM for the emulator
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Boot emulator and run Maestro flows
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          script: |
+            adb install -r android/app/build/outputs/apk/debug/app-debug.apk
+            if [ -z "${{ secrets.TMDB_ACCESS_TOKEN }}" ]; then
+              echo "TMDB_ACCESS_TOKEN not set — running only the flow that doesn't call the TMDB API"
+              maestro test .maestro/language-switch.yaml
+            else
+              maestro test .maestro/
+            fi

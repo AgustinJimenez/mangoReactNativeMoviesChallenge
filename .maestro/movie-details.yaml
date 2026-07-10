@@ -1,0 +1,13 @@
+# Taps the first item in the popular movies list and verifies the details
+# screen rendered (overview section + favorite button). Requires a valid
+# TMDB_ACCESS_TOKEN — see movies-list-and-search.yaml.
+appId: com.mango.moviesapp
+---
+- launchApp
+- assertVisible: 'Movies'
+- tapOn:
+    id: 'media-list-item'
+    index: 0
+- assertVisible: 'Overview'
+- assertVisible:
+    id: 'favorite-button'

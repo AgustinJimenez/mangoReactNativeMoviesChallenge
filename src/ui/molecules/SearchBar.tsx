@@ -22,6 +22,7 @@ export const SearchBar = ({ value, onChangeText }: SearchBarProps) => {
         returnKeyType="search"
         autoCorrect={false}
         accessibilityLabel={placeholder}
+        testID="search-bar-input"
         className="flex-1 text-base text-text"
       />
     </View>
