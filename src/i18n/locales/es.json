@@ -20,5 +20,11 @@
     "add": "Agregar a favoritos",
     "remove": "Quitar de favoritos"
   },
+  "listTemplate": {
+    "staleDataNotice": "No se pudo actualizar, mostrando datos guardados"
+  },
+  "detailsTemplate": {
+    "overview": "Sinopsis"
+  },
   "smokeTestPlaceholder": "Prueba de NativeWind"
 }

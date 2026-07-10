@@ -20,5 +20,11 @@
     "add": "Add to favorites",
     "remove": "Remove from favorites"
   },
+  "listTemplate": {
+    "staleDataNotice": "Couldn't refresh, showing saved data"
+  },
+  "detailsTemplate": {
+    "overview": "Overview"
+  },
   "smokeTestPlaceholder": "NativeWind smoke test"
 }
