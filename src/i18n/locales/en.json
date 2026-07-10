@@ -33,5 +33,10 @@
   "favoritesScreen": {
     "empty": "You don't have any favorites yet"
   },
+  "navigation": {
+    "moviesTab": "Movies",
+    "tvTab": "TV Shows",
+    "favoritesTab": "Favorites"
+  },
   "smokeTestPlaceholder": "NativeWind smoke test"
 }
