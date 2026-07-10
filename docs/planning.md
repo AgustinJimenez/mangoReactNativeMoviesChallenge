@@ -418,6 +418,7 @@ Relevante en particular para `MediaListItem` (fila táctil con imagen) y `Favori
 - **husky + lint-staged**: hook de pre-commit (`.husky/pre-commit` → `npx lint-staged`) que corre `eslint --fix` + `prettier --write` solo sobre los archivos `.ts`/`.tsx` en stage. Barato de configurar y evita commitear código que rompe lint.
 - **`tsconfig.json` más estricto** que el default del template RN: además de `strict: true`, sumar `noUncheckedIndexedAccess`, `noImplicitReturns`, `noFallthroughCasesInSwitch`.
 - **Path alias `@/*`** apuntando a `src/` (en `tsconfig.json` `paths`, espejado en `babel.config.js` con `babel-plugin-module-resolver` y en `jest.config.ts` con `moduleNameMapper`) para evitar imports relativos largos (`../../../ui/atoms/...`).
+- **`npx react-native doctor`**: viene con el RN CLI (no requiere instalar nada aparte), corre un chequeo del entorno (Node, Watchman, JDK, Android SDK/`adb`, Xcode, CocoaPods, etc.) y puede intentar arreglar lo que encuentra con `--fix`. Se usa como primer paso de troubleshooting cuando el build falla por el entorno (no por el código) — evita perder tiempo diagnosticando a mano algo que el propio CLI ya sabe chequear. Se referencia en el README en vez de duplicar instrucciones de setup.
 
 ## Plan de trabajo (pasos)
 
@@ -445,7 +446,7 @@ Relevante en particular para `MediaListItem` (fila táctil con imagen) y `Favori
 El challenge remarca que compilar sin problemas siguiendo el README es parte importante de la evaluación, así que no queda como un paso genérico al final — estructura concreta:
 
 1. **Descripción corta** de la app + 1-2 screenshots o un GIF corto (se puede generar con `mobile-mcp`/mientras se prueba en el emulador).
-2. **Prerrequisitos**: versión de Node, RN CLI (`npx react-native --version` esperado), Xcode (versión mínima) para iOS, Android Studio/SDK/JDK para Android — enlazando a la [guía oficial de entorno de RN](https://reactnative.dev/docs/set-up-your-environment) en vez de duplicar instrucciones de setup que no son específicas de este proyecto.
+2. **Prerrequisitos**: versión de Node, RN CLI (`npx react-native --version` esperado), Xcode (versión mínima) para iOS, Android Studio/SDK/JDK para Android — enlazando a la [guía oficial de entorno de RN](https://reactnative.dev/docs/set-up-your-environment) en vez de duplicar instrucciones de setup que no son específicas de este proyecto. Se sugiere correr `npx react-native doctor` como primer chequeo si algo falla al compilar — diagnostica el entorno (Node/Watchman/JDK/Android SDK/Xcode/CocoaPods) y puede arreglar varios problemas solo con `--fix`.
 3. **Obtener API key de TMDB**: registrarse en TMDB (gratis), generar un *API Read Access Token* (v4, no el `api_key` v3) desde la sección de API de la cuenta.
 4. **Variables de entorno**: copiar `.env.example` a `.env`, completar `TMDB_ACCESS_TOKEN`.
 5. **Instalación**: `npm install` (o `yarn`), `bundle install && bundle exec pod install` en `ios/` (necesario por `expo-image`).
