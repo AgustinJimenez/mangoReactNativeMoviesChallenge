@@ -4,10 +4,13 @@ import { useTranslation } from 'react-i18next';
 import { ROUTES } from '@/navigation/routes';
 import { screenOptions, stackScreenOptions } from '@/navigation/screenOptions';
 import type { MoviesStackParamList } from '@/navigation/types';
+import { LanguageSwitcher } from '@/ui/molecules/LanguageSwitcher';
 import { MovieDetailsScreen } from '@/ui/pages/MovieDetailsScreen';
 import { MoviesListScreen } from '@/ui/pages/MoviesListScreen';
 
 const Stack = createNativeStackNavigator<MoviesStackParamList>();
+
+const renderLanguageSwitcher = () => <LanguageSwitcher />;
 
 export const MoviesStackNavigator = () => {
   const { t } = useTranslation();
@@ -17,7 +20,7 @@ export const MoviesStackNavigator = () => {
       <Stack.Screen
         name={ROUTES.MOVIES_LIST}
         component={MoviesListScreen}
-        options={{ title: t('navigation.moviesTab') }}
+        options={{ title: t('navigation.moviesTab'), headerRight: renderLanguageSwitcher }}
       />
       <Stack.Screen
         name={ROUTES.MOVIE_DETAILS}

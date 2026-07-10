@@ -4,11 +4,14 @@ import { useTranslation } from 'react-i18next';
 import { ROUTES } from '@/navigation/routes';
 import { screenOptions, stackScreenOptions } from '@/navigation/screenOptions';
 import type { FavoritesStackParamList } from '@/navigation/types';
+import { LanguageSwitcher } from '@/ui/molecules/LanguageSwitcher';
 import { FavoritesScreen } from '@/ui/pages/FavoritesScreen';
 import { MovieDetailsScreen } from '@/ui/pages/MovieDetailsScreen';
 import { TvDetailsScreen } from '@/ui/pages/TvDetailsScreen';
 
 const Stack = createNativeStackNavigator<FavoritesStackParamList>();
+
+const renderLanguageSwitcher = () => <LanguageSwitcher />;
 
 export const FavoritesStackNavigator = () => {
   const { t } = useTranslation();
@@ -18,7 +21,7 @@ export const FavoritesStackNavigator = () => {
       <Stack.Screen
         name={ROUTES.FAVORITES_LIST}
         component={FavoritesScreen}
-        options={{ title: t('navigation.favoritesTab') }}
+        options={{ title: t('navigation.favoritesTab'), headerRight: renderLanguageSwitcher }}
       />
       <Stack.Screen
         name={ROUTES.MOVIE_DETAILS}
