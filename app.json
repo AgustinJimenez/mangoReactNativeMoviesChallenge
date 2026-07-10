@@ -1,4 +1,5 @@
 {
   "name": "MangoMovies",
-  "displayName": "MangoMovies"
+  "displayName": "MangoMovies",
+  "plugins": ["expo-image"]
 }

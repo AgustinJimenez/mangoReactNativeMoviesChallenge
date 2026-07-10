@@ -1,8 +1,5 @@
 module.exports = {
-  presets: [
-    ['module:@react-native/babel-preset', { jsxImportSource: 'nativewind' }],
-    'nativewind/babel',
-  ],
+  presets: [['babel-preset-expo', { jsxImportSource: 'nativewind' }], 'nativewind/babel'],
   plugins: [
     [
       'module-resolver',
@@ -13,5 +10,7 @@ module.exports = {
       },
     ],
     ['module:react-native-dotenv', { moduleName: '@env', path: '.env' }],
+    // Must stay last in the list — see https://docs.swmansion.com/react-native-reanimated
+    'react-native-worklets/plugin',
   ],
 };
