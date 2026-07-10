@@ -76,5 +76,11 @@ jobs:
               echo "TMDB_ACCESS_TOKEN not set — running only the flow that doesn't call the TMDB API"
               maestro test .maestro/language-switch.yaml
             else
-              maestro test .maestro/
+              # Run one flow at a time rather than `maestro test .maestro/`:
+              # all four flows share the same appId, and pointing Maestro at
+              # the whole directory runs them concurrently against this one
+              # emulator, racing each other for the same app instance.
+              for flow in .maestro/*.yaml; do
+                maestro test "$flow"
+              done
             fi

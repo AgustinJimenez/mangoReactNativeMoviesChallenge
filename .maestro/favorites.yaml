@@ -5,12 +5,18 @@ appId: com.mango.moviesapp
 ---
 - launchApp
 - assertVisible: 'Movies'
+- extendedWaitUntil:
+    visible:
+      id: 'media-list-item'
+    timeout: 20000
 - tapOn:
     id: 'favorite-button'
     index: 0
 - tapOn: 'Favorites'
-- assertVisible:
-    id: 'media-list-item'
+- extendedWaitUntil:
+    visible:
+      id: 'media-list-item'
+    timeout: 20000
 - tapOn:
     id: 'favorite-button'
     index: 0

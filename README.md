@@ -84,10 +84,16 @@ npm run lint
 End-to-end flows ([Maestro](https://maestro.mobile.dev/)), against an already-running emulator/simulator with the app already installed:
 
 ```sh
-maestro test .maestro/
+maestro test .maestro/<flow>.yaml
 ```
 
 Three of the four flows (`movies-list-and-search`, `movie-details`, `favorites`) exercise the real TMDB API and need a valid `TMDB_ACCESS_TOKEN` in `.env` (rebuild the app after changing it — the token is baked in at build time via `react-native-dotenv`). `language-switch.yaml` doesn't call TMDB and passes regardless.
+
+Run flows one at a time (or in a shell loop) rather than pointing Maestro at the whole `.maestro/` directory: all four flows share the same `appId`, and running them concurrently against a single emulator has them race for the same app instance instead of each getting a clean launch. A simple loop:
+
+```sh
+for flow in .maestro/*.yaml; do maestro test "$flow"; done
+```
 
 CI (`.github/workflows/ci.yml`) runs lint/typecheck and unit tests on every push. Its `e2e` job additionally needs a `TMDB_ACCESS_TOKEN` **repository secret** to run the three API-dependent flows — without it, the job falls back to running only `language-switch.yaml` so CI stays green rather than permanently red.
 
@@ -98,5 +104,6 @@ The full architecture writeup — state management, navigation, styling, caching
 ## Known limitations
 
 - **iOS is unverified on this development machine** (no Xcode installed here). The codebase targets both platforms with no Android-specific APIs, and `pod install`/native config follow the standard bare-RN + Expo-modules pattern, but the iOS build itself hasn't been run end-to-end in this environment.
-- **The three TMDB-dependent Maestro flows aren't verified end-to-end in this environment**, since no real `TMDB_ACCESS_TOKEN` was available while building this — they're written and confirmed to execute correctly up through app launch (failing exactly at the point real data would be needed), but will only fully pass once a real key is configured, locally or as the CI secret described above.
 - **`mobile-mcp`** (the MCP server used for agent-driven interactive verification during development) is registered in this repo's Claude Code config but wasn't available mid-session (registering an MCP server requires a session restart to load) — interactive verification during development used direct `adb`/screenshot tooling instead, to the same effect.
+
+All four Maestro flows, all main app flows (browsing, search, details, favorites, language switching, offline banner) against the real TMDB API, and the full CI-equivalent local suite (typecheck/lint/unit tests/real debug build) have been verified end-to-end.

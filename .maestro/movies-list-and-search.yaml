@@ -6,12 +6,14 @@ appId: com.mango.moviesapp
 ---
 - launchApp
 - assertVisible: 'Movies'
-- assertVisible:
-    id: 'media-list-item'
+- extendedWaitUntil:
+    visible:
+      id: 'media-list-item'
+    timeout: 20000
 - tapOn:
     id: 'search-bar-input'
 - inputText: 'batman'
 - extendedWaitUntil:
     visible:
       id: 'media-list-item'
-    timeout: 10000
+    timeout: 20000
