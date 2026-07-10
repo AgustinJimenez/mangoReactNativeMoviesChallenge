@@ -61,7 +61,7 @@ module.exports = {
       {
         markupOnly: true,
         ignoreAttribute: ['testID', 'accessibilityHint'],
-        ignore: ['^[A-Z_]+$', '^\\d+$', '^[\\s·|/→←•—★]+$', '^https?://', '^\\.'],
+        ignore: ['^[A-Z_]+$', '^\\d+$', '^[\\s·|/→←•—★☆]+$', '^https?://', '^\\.'],
         ignoreCallee: [
           'console.log',
           'console.warn',

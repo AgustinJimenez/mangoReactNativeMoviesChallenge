@@ -16,5 +16,9 @@
   "searchBar": {
     "placeholder": "Search…"
   },
+  "favoriteButton": {
+    "add": "Add to favorites",
+    "remove": "Remove from favorites"
+  },
   "smokeTestPlaceholder": "NativeWind smoke test"
 }

@@ -13,6 +13,7 @@ import {
 } from 'redux-persist';
 
 import { tmdbApi } from '@/api/tmdbApi';
+import { favoritesSlice } from '@/store/favoritesSlice';
 
 type TmdbApiState = ReturnType<typeof tmdbApi.reducer>;
 
@@ -28,15 +29,15 @@ const tmdbApiTransform = createTransform<TmdbApiState, Pick<TmdbApiState, 'queri
   { whitelist: [tmdbApi.reducerPath] },
 );
 
-// favoritesSlice gets added to this reducer map, and to persistConfig.whitelist, in an upcoming step.
 const rootReducer = combineReducers({
   [tmdbApi.reducerPath]: tmdbApi.reducer,
+  [favoritesSlice.name]: favoritesSlice.reducer,
 });
 
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: [tmdbApi.reducerPath],
+  whitelist: [tmdbApi.reducerPath, favoritesSlice.name],
   transforms: [tmdbApiTransform],
 };
 
@@ -61,5 +62,12 @@ export const store = configureStore({
 
 export const persistor = persistStore(store);
 
-export type RootState = ReturnType<typeof store.getState>;
+// Typed from rootReducer directly rather than `store.getState()`: the `any`
+// cast a few lines up (needed to satisfy persistReducer's parameter type)
+// otherwise poisons inference all the way through to here, turning every
+// useAppSelector call in the app into implicit `any`. rootReducer's own
+// return type is unaffected by that cast and is the exact shape app code
+// actually selects from (redux-persist only adds an internal `_persist`
+// field at runtime, which nothing in this app reads).
+export type RootState = ReturnType<typeof rootReducer>;
 export type AppDispatch = typeof store.dispatch;

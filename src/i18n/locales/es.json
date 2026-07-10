@@ -16,5 +16,9 @@
   "searchBar": {
     "placeholder": "Buscar…"
   },
+  "favoriteButton": {
+    "add": "Agregar a favoritos",
+    "remove": "Quitar de favoritos"
+  },
   "smokeTestPlaceholder": "Prueba de NativeWind"
 }
