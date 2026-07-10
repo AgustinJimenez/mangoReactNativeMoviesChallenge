@@ -5,7 +5,15 @@ const TMDB_LOCALE_BY_LANGUAGE: Record<Locale, string> = {
   en: 'en-US',
 };
 
-export const toTmdbLanguage = (language: string): string => {
-  const normalized = language.split('-')[0] as Locale;
-  return TMDB_LOCALE_BY_LANGUAGE[normalized] ?? TMDB_LOCALE_BY_LANGUAGE.es;
+const SUPPORTED_LOCALES: Locale[] = ['es', 'en'];
+const FALLBACK_LOCALE: Locale = 'es';
+
+export const normalizeLocale = (language: string): Locale => {
+  const candidate = language.split('-')[0] ?? language;
+  return (SUPPORTED_LOCALES as string[]).includes(candidate)
+    ? (candidate as Locale)
+    : FALLBACK_LOCALE;
 };
+
+export const toTmdbLanguage = (language: string): string =>
+  TMDB_LOCALE_BY_LANGUAGE[normalizeLocale(language)];

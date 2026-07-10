@@ -26,5 +26,12 @@
   "detailsTemplate": {
     "overview": "Sinopsis"
   },
+  "mediaList": {
+    "emptyDefault": "No hay resultados",
+    "emptySearch": "No encontramos resultados para tu búsqueda"
+  },
+  "favoritesScreen": {
+    "empty": "Todavía no tenés favoritos"
+  },
   "smokeTestPlaceholder": "Prueba de NativeWind"
 }

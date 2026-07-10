@@ -26,5 +26,12 @@
   "detailsTemplate": {
     "overview": "Overview"
   },
+  "mediaList": {
+    "emptyDefault": "No results",
+    "emptySearch": "We couldn't find any results for your search"
+  },
+  "favoritesScreen": {
+    "empty": "You don't have any favorites yet"
+  },
   "smokeTestPlaceholder": "NativeWind smoke test"
 }

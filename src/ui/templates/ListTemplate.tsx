@@ -19,8 +19,8 @@ type ListTemplateProps<T> = {
   errorStatus?: number;
   onRetry: () => void;
   emptyMessage: string;
-  hasNextPage: boolean;
-  onEndReached: () => void;
+  hasNextPage?: boolean;
+  onEndReached?: () => void;
   searchValue?: string;
   onSearchChange?: (text: string) => void;
 };
@@ -35,7 +35,7 @@ export const ListTemplate = <T,>({
   errorStatus,
   onRetry,
   emptyMessage,
-  hasNextPage,
+  hasNextPage = false,
   onEndReached,
   searchValue,
   onSearchChange,
