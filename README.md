@@ -1,97 +1,102 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# MangoMovies
 
-# Getting Started
+A React Native movies/TV browser built against [The Movie Database (TMDB)](https://www.themoviedb.org/) API: browse and search popular movies and TV shows, view details, and mark favorites — with offline-aware caching, i18n (es/en), and a few native-thread animations.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+<p align="center">
+  <img src="docs/screenshots/movies-list.png" alt="Movies list screen" width="280" />
+  <img src="docs/screenshots/movie-details.png" alt="Movie details screen" width="280" />
+</p>
 
-## Step 1: Start Metro
+## Prerequisites
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+- Node `>= 22.11.0` (see `package.json`'s `engines` field).
+- React Native CLI environment set up for the platform you're targeting — follow the official [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide (Android: Android Studio + SDK + JDK; iOS: Xcode, macOS only). This project doesn't need anything beyond the standard bare React Native CLI setup.
+- If something fails to build and you're not sure whether it's this project or your environment, run `npx react-native doctor` first — it diagnoses Node/Watchman/JDK/Android SDK/Xcode/CocoaPods and can fix several issues on its own with `npx react-native doctor --fix`.
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+## Getting a TMDB API key
+
+1. Create a free account at [themoviedb.org](https://www.themoviedb.org/signup).
+2. Go to your account's **Settings → API** section.
+3. Generate an **API Read Access Token** (the long JWT-style v4 token — not the shorter v3 `api_key`).
+
+## Environment variables
+
+Copy `.env.example` to `.env` and fill in the token from the previous step:
 
 ```sh
-# Using npm
-npm start
-
-# OR using Yarn
-yarn start
+cp .env.example .env
 ```
 
-## Step 2: Build and run your app
-
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
-
-```sh
-# Using npm
-npm run android
-
-# OR using Yarn
-yarn android
+```
+TMDB_ACCESS_TOKEN=your-v4-read-access-token
 ```
 
-### iOS
-
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+## Installation
 
 ```sh
+npm install
+```
+
+iOS only (needed once, and again after any native dependency changes — this project uses `expo-image`, which requires CocoaPods):
+
+```sh
+cd ios
 bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
 bundle exec pod install
+cd ..
 ```
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+## Running the app
+
+Start Metro in one terminal:
 
 ```sh
-# Using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
+npm start
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+Then, with an Android emulator already booted (or a device connected):
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+```sh
+npm run android
+```
 
-## Step 3: Modify your app
+Or, on macOS with a simulator available:
 
-Now that you have successfully run the app, let's make changes!
+```sh
+npm run ios
+```
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+## Running tests
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+Unit and component tests (Jest + React Native Testing Library):
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+```sh
+npm test
+```
 
-## Congratulations! :tada:
+Type-checking and linting:
 
-You've successfully run and modified your React Native App. :partying_face:
+```sh
+npm run typecheck
+npm run lint
+```
 
-### Now what?
+End-to-end flows ([Maestro](https://maestro.mobile.dev/)), against an already-running emulator/simulator with the app already installed:
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+```sh
+maestro test .maestro/
+```
 
-# Troubleshooting
+Three of the four flows (`movies-list-and-search`, `movie-details`, `favorites`) exercise the real TMDB API and need a valid `TMDB_ACCESS_TOKEN` in `.env` (rebuild the app after changing it — the token is baked in at build time via `react-native-dotenv`). `language-switch.yaml` doesn't call TMDB and passes regardless.
 
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+CI (`.github/workflows/ci.yml`) runs lint/typecheck and unit tests on every push. Its `e2e` job additionally needs a `TMDB_ACCESS_TOKEN` **repository secret** to run the three API-dependent flows — without it, the job falls back to running only `language-switch.yaml` so CI stays green rather than permanently red.
 
-# Learn More
+## Architecture decisions
 
-To learn more about React Native, take a look at the following resources:
+The full architecture writeup — state management, navigation, styling, caching strategy, testing strategy, and the reasoning behind each choice — lives in [`docs/planning.md`](docs/planning.md) rather than duplicated here.
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+## Known limitations
+
+- **iOS is unverified on this development machine** (no Xcode installed here). The codebase targets both platforms with no Android-specific APIs, and `pod install`/native config follow the standard bare-RN + Expo-modules pattern, but the iOS build itself hasn't been run end-to-end in this environment.
+- **The three TMDB-dependent Maestro flows aren't verified end-to-end in this environment**, since no real `TMDB_ACCESS_TOKEN` was available while building this — they're written and confirmed to execute correctly up through app launch (failing exactly at the point real data would be needed), but will only fully pass once a real key is configured, locally or as the CI secret described above.
+- **`mobile-mcp`** (the MCP server used for agent-driven interactive verification during development) is registered in this repo's Claude Code config but wasn't available mid-session (registering an MCP server requires a session restart to load) — interactive verification during development used direct `adb`/screenshot tooling instead, to the same effect.
