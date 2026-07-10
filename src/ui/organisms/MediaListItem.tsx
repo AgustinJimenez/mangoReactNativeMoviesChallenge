@@ -5,6 +5,7 @@ import type { Media } from '@/types/media';
 import { Poster } from '@/ui/atoms/Poster';
 import { RatingBadge } from '@/ui/atoms/RatingBadge';
 import { FavoriteButton } from '@/ui/molecules/FavoriteButton';
+import { buildPosterTransitionTag } from '@/utils/image';
 
 type MediaListItemProps = {
   media: Media;
@@ -23,7 +24,12 @@ export const MediaListItem = memo(({ media, onPress }: MediaListItemProps) => {
       className="flex-row items-center gap-md p-sm"
     >
       <View className="w-20">
-        <Poster path={media.posterPath} title={media.title} size="w342" />
+        <Poster
+          path={media.posterPath}
+          title={media.title}
+          size="w342"
+          sharedTransitionTag={buildPosterTransitionTag(media.mediaType, media.id)}
+        />
       </View>
       <View className="flex-1 gap-xs">
         <Text numberOfLines={2} className="text-base font-semibold text-text">

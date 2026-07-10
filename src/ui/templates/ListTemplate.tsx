@@ -1,13 +1,21 @@
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, FlatList, Text, View } from 'react-native';
+import { ActivityIndicator, Text, View } from 'react-native';
 import type { ListRenderItem } from 'react-native';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 
+import { RefreshIndicator } from '@/ui/atoms/RefreshIndicator';
 import { EmptyState } from '@/ui/molecules/EmptyState';
 import { ErrorState } from '@/ui/molecules/ErrorState';
 import { LoadingState } from '@/ui/molecules/LoadingState';
 import { SearchBar } from '@/ui/molecules/SearchBar';
 
 const END_REACHED_THRESHOLD = 0.5;
+// Caps the stagger delay so items appended deep into a paginated list (well
+// past what's ever visible mid-animation) don't wait increasingly long —
+// only the first screenful benefits from a staggered entrance anyway.
+const MAX_STAGGERED_INDEX = 8;
+const STAGGER_DELAY_MS = 30;
 
 type ListTemplateProps<T> = {
   data: T[] | undefined;
@@ -43,6 +51,17 @@ export const ListTemplate = <T,>({
   const { t } = useTranslation();
   const hasData = !!data && data.length > 0;
 
+  const renderAnimatedItem: ListRenderItem<T> = useCallback(
+    (info) => (
+      <Animated.View
+        entering={FadeInDown.delay(Math.min(info.index, MAX_STAGGERED_INDEX) * STAGGER_DELAY_MS)}
+      >
+        {renderItem(info)}
+      </Animated.View>
+    ),
+    [renderItem],
+  );
+
   if (isLoading) {
     return <LoadingState />;
   }
@@ -55,10 +74,10 @@ export const ListTemplate = <T,>({
   const body = !hasData ? (
     <EmptyState message={emptyMessage} />
   ) : (
-    <FlatList
+    <Animated.FlatList
       data={data}
       keyExtractor={keyExtractor}
-      renderItem={renderItem}
+      renderItem={renderAnimatedItem}
       onEndReached={hasNextPage ? onEndReached : undefined}
       onEndReachedThreshold={END_REACHED_THRESHOLD}
       keyboardShouldPersistTaps="handled"
@@ -74,7 +93,7 @@ export const ListTemplate = <T,>({
           <SearchBar value={searchValue ?? ''} onChangeText={onSearchChange} />
         </View>
       )}
-      {isFetching && hasData && <View className="h-0.5 bg-primary" />}
+      {isFetching && hasData && <RefreshIndicator />}
       {isError && hasData && (
         <Text className="bg-danger/20 px-md py-xs text-center text-xs text-text">
           {t('listTemplate.staleDataNotice')}
