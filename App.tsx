@@ -10,7 +10,15 @@ import './global.css';
 import { StatusBar, Text, useColorScheme, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-function App() {
+const AppContent = () => {
+  return (
+    <View className="flex-1 items-center justify-center bg-slate-900">
+      <Text className="text-2xl font-bold text-white">NativeWind smoke test</Text>
+    </View>
+  );
+};
+
+export const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
 
   return (
@@ -19,16 +27,4 @@ function App() {
       <AppContent />
     </SafeAreaProvider>
   );
-}
-
-function AppContent() {
-  return (
-    <View className="flex-1 items-center justify-center bg-slate-900">
-      <Text className="text-2xl font-bold text-white">
-        NativeWind smoke test
-      </Text>
-    </View>
-  );
-}
-
-export default App;
+};
