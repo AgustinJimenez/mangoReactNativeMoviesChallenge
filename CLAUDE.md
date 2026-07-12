@@ -17,7 +17,10 @@ crashes on-device; only a real build + launch catches that. Disk space on
 this machine runs chronically low — if a build fails with "No space left on
 device", clean up before assuming it's a code problem:
 `rm -rf android/app/build android/build android/app/.cxx && npm cache clean
---force && rm -rf ~/.npm/_npx`.
+--force && rm -rf ~/.npm/_npx`. Don't also clear `~/.gradle/caches` (6-7GB) —
+it's Gradle's own dependency/build cache, not project-local; wiping it makes
+every subsequent build dramatically slower (full re-download/re-process)
+instead of the few hundred MB the command above actually frees.
 
 ## Gotchas already paid for once
 
@@ -113,6 +116,32 @@ exist`, every call, silently.** Cause: `expo-image` transitively loads
   repeated id became a repeated React key. Fixed by `mergePaginatedResults`
   (shared by all four list/search endpoints), which drops any incoming
   item whose id is already in the cache before pushing.
+
+- **Testing "offline" behavior by cutting network before `launchApp`/cold
+  start doesn't work on a debug build.** A debug build's JS bundle loads
+  from the Metro dev server over the network on launch — no network means
+  no bundle, not "app launches and then hits the offline-cache path." To
+  actually exercise offline UI (`OfflineBanner`, stale-data notices, cached
+  reads), the app has to already be running with the bundle loaded, _then_
+  cut network (wifi/data off, or `adb shell svc wifi disable` +
+  `svc data disable`) while it's alive. `assembleRelease` (bundled JS,
+  no Metro dependency) would sidestep this, but see the next entry.
+
+- **`./gradlew assembleRelease` currently fails** with a Gradle
+  task-graph/implicit-dependency validation error around
+  `:app:createBundleReleaseJsAndAssets` — not an app-code issue, a build
+  config gap. Don't reach for a release build as a workaround for
+  something else (e.g. offline testing above) expecting it to just work;
+  it needs its own fix first.
+
+- **ESLint's `no-restricted-syntax` ternary ban covers _every_ ternary
+  inside a JSX expression container (`{cond ? a : b}`), including ones
+  where both branches are plain strings** — not just ones choosing between
+  two JSX elements. Confirmed by lint output on `{hasOverview ? overview :
+t('...')}` (both string-typed branches). Fix is the same either way:
+  pull it out to a `const` above the `return` and reference the variable
+  in JSX — a ternary in ordinary assignment position isn't inside a JSX
+  expression container, so it's untouched by the rule.
 
 ## Environment specifics (this machine)
 
