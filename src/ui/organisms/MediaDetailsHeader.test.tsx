@@ -49,6 +49,35 @@ describe('MediaDetailsHeader', () => {
     expect(queryByText(/2h 19m/)).toBeNull();
   });
 
+  it('omits the runtime segment when runtimeMinutes is 0 (TMDB has no data yet, not an actual 0m runtime)', () => {
+    const { queryByText } = renderWithProviders(
+      <MediaDetailsHeader media={{ ...MOVIE_DETAILS, runtimeMinutes: 0 }} />,
+    );
+
+    expect(queryByText(/0m/)).toBeNull();
+  });
+
+  it('omits the release date when TMDB has none for the active language, without a stray leading bullet on the runtime', () => {
+    const { queryByText, getByText } = renderWithProviders(
+      <MediaDetailsHeader media={{ ...MOVIE_DETAILS, releaseDate: '' }} />,
+    );
+
+    expect(queryByText('1999-10-15')).toBeNull();
+    expect(getByText('2h 19m')).toBeTruthy();
+  });
+
+  it('renders nothing in the date/runtime row when date is empty, runtime is 0, and there is no certification', () => {
+    const { queryByText } = renderWithProviders(
+      <MediaDetailsHeader
+        media={{ ...MOVIE_DETAILS, releaseDate: '', runtimeMinutes: 0, certification: null }}
+      />,
+    );
+
+    expect(queryByText('1999-10-15')).toBeNull();
+    expect(queryByText(/m$/)).toBeNull();
+    expect(queryByText('R')).toBeNull();
+  });
+
   it('shows "No votes" instead of a score when voteCount is 0', () => {
     const { getByText } = renderWithProviders(
       <MediaDetailsHeader media={{ ...MOVIE_DETAILS, voteCount: 0 }} />,

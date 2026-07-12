@@ -36,6 +36,7 @@
   },
   "detailsTemplate": {
     "overview": "Sinopsis",
+    "noOverview": "No hay sinopsis disponible",
     "cast": "Reparto",
     "trailer": "Tráiler",
     "officialTrailer": "Tráiler oficial",

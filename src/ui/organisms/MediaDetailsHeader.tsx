@@ -35,23 +35,42 @@ type DateAndRuntimeProps = {
   certification: string | null;
 };
 
-const DateAndRuntime = ({ releaseDate, runtimeMinutes, certification }: DateAndRuntimeProps) => (
-  <View className="flex-row items-center gap-xs">
-    <Ionicons name="calendar-outline" size={CALENDAR_ICON_SIZE} color={colors.textMuted} />
-    <Text className="text-sm text-textMuted">{releaseDate}</Text>
-    {runtimeMinutes != null && (
-      <Text className="text-sm text-textMuted">
-        {'• '}
-        {formatRuntime(runtimeMinutes)}
-      </Text>
-    )}
-    {certification != null && (
-      <View className="rounded border border-textMuted px-xs">
-        <Text className="text-xs font-semibold text-textMuted">{certification}</Text>
-      </View>
-    )}
-  </View>
-);
+// TMDB's release_date/runtime aren't always filled in for every language a
+// title has some data in (a movie can have an English synopsis but an
+// empty es-ES release_date, or a runtime of 0 for an unreleased/incomplete
+// entry) — each piece hides independently instead of rendering an empty
+// date or a meaningless "0m", and the whole row disappears if nothing in
+// it has real data.
+const DateAndRuntime = ({ releaseDate, runtimeMinutes, certification }: DateAndRuntimeProps) => {
+  const hasDate = releaseDate.length > 0;
+  const hasRuntime = runtimeMinutes != null && runtimeMinutes > 0;
+
+  if (!hasDate && !hasRuntime && certification == null) {
+    return null;
+  }
+
+  return (
+    <View className="flex-row items-center gap-xs">
+      {hasDate && (
+        <>
+          <Ionicons name="calendar-outline" size={CALENDAR_ICON_SIZE} color={colors.textMuted} />
+          <Text className="text-sm text-textMuted">{releaseDate}</Text>
+        </>
+      )}
+      {hasRuntime && (
+        <Text className="text-sm text-textMuted">
+          {hasDate && '• '}
+          {formatRuntime(runtimeMinutes)}
+        </Text>
+      )}
+      {certification != null && (
+        <View className="rounded border border-textMuted px-xs">
+          <Text className="text-xs font-semibold text-textMuted">{certification}</Text>
+        </View>
+      )}
+    </View>
+  );
+};
 
 type RatingRowProps = {
   voteAverage: number;

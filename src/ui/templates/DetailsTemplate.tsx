@@ -1,9 +1,10 @@
 import { useTranslation } from 'react-i18next';
-import { ScrollView, Text, View } from 'react-native';
+import { ScrollView, Text } from 'react-native';
 
 import type { Media, MediaDetails } from '@/types/media';
 import { RefreshIndicator } from '@/ui/atoms/RefreshIndicator';
 import { ErrorState } from '@/ui/molecules/ErrorState';
+import { OverviewSection } from '@/ui/molecules/OverviewSection';
 import { TrailerSection } from '@/ui/molecules/TrailerSection';
 import { CastList } from '@/ui/organisms/CastList';
 import { DetailsSkeleton } from '@/ui/organisms/DetailsSkeleton';
@@ -57,10 +58,7 @@ export const DetailsTemplate = ({
           {t('common.staleDataNotice')}
         </Text>
       )}
-      <View className="px-md">
-        <Text className="text-base font-semibold text-text">{t('detailsTemplate.overview')}</Text>
-        <Text className="mt-xs text-sm text-textMuted">{media.overview}</Text>
-      </View>
+      <OverviewSection overview={media.overview} />
       <CastList cast={media.cast} />
       <TrailerSection trailerKey={media.trailerKey} />
       <RecommendationsList

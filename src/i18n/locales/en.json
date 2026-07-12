@@ -36,6 +36,7 @@
   },
   "detailsTemplate": {
     "overview": "Overview",
+    "noOverview": "No overview available",
     "cast": "Cast",
     "trailer": "Trailer",
     "officialTrailer": "Official Trailer",
