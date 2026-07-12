@@ -54,9 +54,16 @@ export const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
+      // Details responses cache cast/videos/recommendations/release_dates
+      // alongside the core fields, so the dev-only immutable/serializable
+      // deep-equality checks routinely exceed RTK's default 32ms warning
+      // threshold on this slice even though nothing is actually slow — bump
+      // both instead of the checks firing on every details screen.
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+        warnAfter: 128,
       },
+      immutableCheck: { warnAfter: 128 },
     }).concat(tmdbApi.middleware),
 });
 

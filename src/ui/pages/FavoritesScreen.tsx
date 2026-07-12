@@ -44,6 +44,8 @@ export const FavoritesScreen = () => {
       isError={false}
       onRetry={noop}
       emptyMessage={t('favoritesScreen.empty')}
+      title={t('navigation.favoritesTab')}
+      subtitle={t('listHeader.favoritesSubtitle')}
     />
   );
 };

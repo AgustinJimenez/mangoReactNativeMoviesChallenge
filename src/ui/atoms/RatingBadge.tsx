@@ -5,7 +5,8 @@ import { Text, View } from 'react-native';
 
 import { colors } from '@/theme/tokens';
 
-const STAR_ICON_SIZE = 12;
+const STAR_ICON_SIZE = 14;
+const MAX_RATING = 10;
 
 type RatingBadgeProps = {
   voteAverage: number;
@@ -15,12 +16,21 @@ type RatingBadgeProps = {
 // Memoized: rendered once per row in list FlatLists, props are two numbers.
 export const RatingBadge = memo(({ voteAverage, voteCount }: RatingBadgeProps) => {
   const { t } = useTranslation();
-  const label = voteCount > 0 ? voteAverage.toFixed(1) : t('rating.noVotes');
+
+  if (voteCount === 0) {
+    return <Text className="text-xs text-textMuted">{t('rating.noVotes')}</Text>;
+  }
+
+  const fillPercent = (voteAverage / MAX_RATING) * 100;
 
   return (
-    <View className="flex-row items-center gap-xs rounded-full bg-black/60 px-sm py-xs">
+    <View className="flex-row items-center gap-xs">
       <Ionicons name="star" size={STAR_ICON_SIZE} color={colors.primary} />
-      <Text className="text-xs font-bold text-text">{label}</Text>
+      <Text className="text-xs font-bold text-text">{voteAverage.toFixed(1)}</Text>
+      <Text className="text-xs text-textMuted">/10</Text>
+      <View className="h-1.5 flex-1 overflow-hidden rounded-full bg-border">
+        <View className="h-full rounded-full bg-primary" style={{ width: `${fillPercent}%` }} />
+      </View>
     </View>
   );
 });

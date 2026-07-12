@@ -1,4 +1,4 @@
-import { normalizeLocale, toTmdbLanguage } from '@/i18n/tmdbLocale';
+import { normalizeLocale, toTmdbLanguage, toTmdbRegion } from '@/i18n/tmdbLocale';
 
 describe('normalizeLocale', () => {
   it('passes through a supported locale unchanged', () => {
@@ -29,5 +29,16 @@ describe('toTmdbLanguage', () => {
 
   it('normalizes a region-qualified language before mapping', () => {
     expect(toTmdbLanguage('en-GB')).toBe('en-US');
+  });
+});
+
+describe('toTmdbRegion', () => {
+  it('extracts the region half of the TMDB language for a supported locale', () => {
+    expect(toTmdbRegion('en')).toBe('US');
+    expect(toTmdbRegion('es')).toBe('ES');
+  });
+
+  it('maps an unsupported language to the fallback locale region', () => {
+    expect(toTmdbRegion('fr')).toBe('ES');
   });
 });

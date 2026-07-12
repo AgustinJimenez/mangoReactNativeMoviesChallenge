@@ -37,6 +37,8 @@ const POPULAR_MOVIES_RESPONSE = {
       poster_path: '/pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg',
       vote_average: 8.4,
       vote_count: 26000,
+      overview: 'A ticking-time-bomb insomniac and a slippery soap salesman...',
+      genre_ids: [18, 53],
     },
   ],
   total_pages: 1,

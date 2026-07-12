@@ -1,21 +1,13 @@
-import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import type { ListRenderItem } from 'react-native';
-import Animated, { FadeInDown } from 'react-native-reanimated';
 
+import type { SortBy } from '@/api/tmdbApi';
+import type { MediaType } from '@/types/common';
 import { RefreshIndicator } from '@/ui/atoms/RefreshIndicator';
-import { EmptyState } from '@/ui/molecules/EmptyState';
-import { ErrorState } from '@/ui/molecules/ErrorState';
-import { LoadingState } from '@/ui/molecules/LoadingState';
-import { SearchBar } from '@/ui/molecules/SearchBar';
-
-const END_REACHED_THRESHOLD = 0.5;
-// Caps the stagger delay so items appended deep into a paginated list (well
-// past what's ever visible mid-animation) don't wait increasingly long —
-// only the first screenful benefits from a staggered entrance anyway.
-const MAX_STAGGERED_INDEX = 8;
-const STAGGER_DELAY_MS = 30;
+import { ListHeader } from '@/ui/molecules/ListHeader';
+import { SearchAndFilters } from '@/ui/molecules/SearchAndFilters';
+import { ListBody } from '@/ui/organisms/ListBody';
 
 type ListTemplateProps<T> = {
   data: T[] | undefined;
@@ -31,6 +23,18 @@ type ListTemplateProps<T> = {
   onEndReached?: () => void;
   searchValue?: string;
   onSearchChange?: (text: string) => void;
+  title?: string;
+  subtitle?: string;
+  // Genre filter + sort only apply to the /discover-backed popular list —
+  // TMDB's search endpoint doesn't accept with_genres/sort_by (see
+  // tmdbApi.ts), so these are hidden below whenever a search is active,
+  // and are simply omitted by callers (FavoritesScreen) that don't have
+  // them at all.
+  mediaType?: MediaType;
+  genreId?: number | null;
+  onGenreChange?: (genreId: number | null) => void;
+  sortBy?: SortBy;
+  onSortChange?: (sortBy: SortBy) => void;
 };
 
 export const ListTemplate = <T,>({
@@ -47,59 +51,53 @@ export const ListTemplate = <T,>({
   onEndReached,
   searchValue,
   onSearchChange,
+  title,
+  subtitle,
+  mediaType,
+  genreId,
+  onGenreChange,
+  sortBy,
+  onSortChange,
 }: ListTemplateProps<T>) => {
   const { t } = useTranslation();
   const hasData = !!data && data.length > 0;
-
-  const renderAnimatedItem: ListRenderItem<T> = useCallback(
-    (info) => (
-      <Animated.View
-        entering={FadeInDown.delay(Math.min(info.index, MAX_STAGGERED_INDEX) * STAGGER_DELAY_MS)}
-      >
-        {renderItem(info)}
-      </Animated.View>
-    ),
-    [renderItem],
-  );
-
-  if (isLoading) {
-    return <LoadingState />;
-  }
-
-  if (isError && !hasData) {
-    return <ErrorState status={errorStatus} onRetry={onRetry} />;
-  }
-
-  const listFooter = isFetching && hasNextPage ? <ActivityIndicator className="py-md" /> : null;
-  const body = !hasData ? (
-    <EmptyState message={emptyMessage} />
-  ) : (
-    <Animated.FlatList
-      data={data}
-      keyExtractor={keyExtractor}
-      renderItem={renderAnimatedItem}
-      onEndReached={hasNextPage ? onEndReached : undefined}
-      onEndReachedThreshold={END_REACHED_THRESHOLD}
-      keyboardShouldPersistTaps="handled"
-      removeClippedSubviews
-      ListFooterComponent={listFooter}
-    />
-  );
+  const isSearching = !!searchValue?.trim();
+  const filters =
+    !isSearching && mediaType && onGenreChange && sortBy && onSortChange
+      ? { mediaType, genreId: genreId ?? null, onGenreChange, sortBy, onSortChange }
+      : undefined;
 
   return (
     <View className="flex-1 bg-background">
+      {title && <ListHeader title={title} subtitle={subtitle} />}
       {onSearchChange && (
-        <View className="p-md">
-          <SearchBar value={searchValue ?? ''} onChangeText={onSearchChange} />
-        </View>
+        <SearchAndFilters
+          searchValue={searchValue ?? ''}
+          onSearchChange={onSearchChange}
+          filters={filters}
+        />
       )}
       {isFetching && hasData && <RefreshIndicator />}
       {isError && hasData && (
         <Text className="bg-danger/20 px-md py-xs text-center text-xs text-text">
-          {t('listTemplate.staleDataNotice')}
+          {t('common.staleDataNotice')}
         </Text>
       )}
-      {body}
+      <View className="flex-1">
+        <ListBody
+          data={data}
+          keyExtractor={keyExtractor}
+          renderItem={renderItem}
+          isLoading={isLoading}
+          isFetching={isFetching}
+          isError={isError}
+          errorStatus={errorStatus}
+          onRetry={onRetry}
+          emptyMessage={emptyMessage}
+          hasNextPage={hasNextPage}
+          onEndReached={onEndReached}
+        />
+      </View>
     </View>
   );
 };

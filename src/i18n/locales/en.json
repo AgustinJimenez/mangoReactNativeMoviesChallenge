@@ -1,5 +1,10 @@
 {
   "retry": "Retry",
+  "common": {
+    "dismiss": "Close",
+    "goBack": "Go back",
+    "staleDataNotice": "Couldn't refresh, showing saved data"
+  },
   "errorBoundary": {
     "title": "Something went wrong"
   },
@@ -20,11 +25,17 @@
     "add": "Add to favorites",
     "remove": "Remove from favorites"
   },
-  "listTemplate": {
-    "staleDataNotice": "Couldn't refresh, showing saved data"
-  },
   "detailsTemplate": {
-    "overview": "Overview"
+    "overview": "Overview",
+    "cast": "Cast",
+    "trailer": "Trailer",
+    "officialTrailer": "Official Trailer",
+    "youtube": "YouTube",
+    "recommendations": "Recommendations",
+    "votes": "{{count}} votes"
+  },
+  "shareButton": {
+    "label": "Share"
   },
   "mediaList": {
     "emptyDefault": "No results",
@@ -38,8 +49,56 @@
     "tvTab": "TV Shows",
     "favoritesTab": "Favorites"
   },
+  "listHeader": {
+    "moviesSubtitle": "Discover popular movies",
+    "tvSubtitle": "Discover popular TV shows",
+    "favoritesSubtitle": "Your saved movies and shows"
+  },
   "offlineBanner": {
     "message": "No internet connection"
+  },
+  "filtersModal": {
+    "title": "Filters"
+  },
+  "genreFilter": {
+    "label": "Genre",
+    "all": "All"
+  },
+  "sort": {
+    "label": "Sort by",
+    "popularity": "Popularity",
+    "rating": "Highest Rated",
+    "newest": "Newest",
+    "title": "Title A-Z"
+  },
+  "genres": {
+    "action": "Action",
+    "adventure": "Adventure",
+    "animation": "Animation",
+    "comedy": "Comedy",
+    "crime": "Crime",
+    "documentary": "Documentary",
+    "drama": "Drama",
+    "family": "Family",
+    "fantasy": "Fantasy",
+    "history": "History",
+    "horror": "Horror",
+    "music": "Music",
+    "mystery": "Mystery",
+    "romance": "Romance",
+    "scienceFiction": "Science Fiction",
+    "tvMovie": "TV Movie",
+    "thriller": "Thriller",
+    "war": "War",
+    "western": "Western",
+    "actionAdventure": "Action & Adventure",
+    "kids": "Kids",
+    "news": "News",
+    "reality": "Reality",
+    "sciFiFantasy": "Sci-Fi & Fantasy",
+    "soap": "Soap",
+    "talk": "Talk",
+    "warPolitics": "War & Politics"
   },
   "smokeTestPlaceholder": "NativeWind smoke test"
 }

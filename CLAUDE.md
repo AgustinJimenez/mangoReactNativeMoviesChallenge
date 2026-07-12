@@ -70,6 +70,50 @@ exist`, every call, silently.** Cause: `expo-image` transitively loads
   each other for the same app instance. Run flows one at a time (a shell
   loop), both locally and in CI — see the README's testing section.
 
+- **A flow's first `assertVisible` right after `launchApp` needs
+  `extendedWaitUntil`, not a plain `assertVisible`, once list screens hide
+  the native-stack header.** MoviesListScreen/TvListScreen/FavoritesScreen
+  set `headerShown: false` and render their own title inside `ListTemplate`
+  (see "Iconografía"/list-header section in `docs/planning.md`) — that text
+  only exists after the JS bundle evaluates and React renders a frame,
+  unlike a native header title which can paint before JS finishes loading.
+  A bare `assertVisible: 'Movies'` right after `launchApp` is a real race on
+  a cold Metro cache. Beyond that fix, a single flow run in isolation can
+  still occasionally fail this same assertion even though the very next
+  retry (and a screenshot taken at the failure instant) shows the text
+  fully rendered — that's emulator/Maestro flakiness, not app state; retry
+  once before treating it as a regression.
+
+- **A `horizontal` `FlatList` with no bounded height silently stretches to
+  fill whatever vertical space its flex ancestors leave available,** and
+  neither `className="h-10"` nor a plain `style={{ height: 40 }}` directly
+  on `<FlatList>` fixes it — confirmed with a debug `backgroundColor` in
+  that same style object: the color applied, the height didn't. Whatever
+  FlatList/VirtualizedList does internally with its own `style` resolution
+  for the scroll container ignores height specifically. Fix: wrap it in a
+  plain `<View style={{ height: N, overflow: 'hidden' }}>` — View reliably
+  respects height, FlatList's own style prop doesn't. Also set
+  `alignItems: 'center'` on `contentContainerStyle` for a horizontal
+  chip/pill row like this — without it, each row item stretches to the
+  row's cross-axis size by default, so `rounded-full` renders as a tall
+  stadium shape instead of a pill once the row itself is
+  however-many-hundred pixels tall from the bug above. (This particular
+  row got redesigned into a dropdown — see `Select.tsx` — but the
+  underlying FlatList-height gotcha is still real and will resurface
+  wherever else a horizontal FlatList shows up.)
+
+- **React "Encountered two children with the same key" warning in a
+  paginated `FlatList`, intermittent, only after scrolling a few pages
+  deep.** Cause: TMDB's `/discover` ranking can shift slightly between
+  page fetches (worse once `sort_by`/`with_genres` are in play — plain
+  `popularity.desc` on page 1 is more stable than e.g. `vote_average.desc`
+  where many items tie), so the same item can land on two different pages
+  of the same paginated request. `tmdbApi.ts`'s `merge` functions
+  concatenated pages with a plain `.push(...newResponse.results)`, so a
+  repeated id became a repeated React key. Fixed by `mergePaginatedResults`
+  (shared by all four list/search endpoints), which drops any incoming
+  item whose id is already in the cache before pushing.
+
 ## Environment specifics (this machine)
 
 - Android SDK: `~/Library/Android/sdk` (not the Homebrew location — there

@@ -49,7 +49,9 @@ export const FavoriteButton = memo(({ id, mediaType }: FavoriteButtonProps) => {
       accessibilityRole="button"
       accessibilityLabel={label}
       testID="favorite-button"
-      className="size-10 items-center justify-center rounded-full bg-black/60"
+      className={`size-10 items-center justify-center rounded-full border ${
+        isFavorite ? 'border-primary bg-primary/10' : 'border-border bg-transparent'
+      }`}
     >
       <Animated.View style={animatedStyle}>
         <Ionicons

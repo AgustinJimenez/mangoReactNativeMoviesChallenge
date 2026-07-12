@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import type { ListRenderItem } from 'react-native';
 
 import { useGetPopularTvQuery, useSearchTvQuery } from '@/api/tmdbApi';
+import type { SortBy } from '@/api/tmdbApi';
 import { useActiveLocale } from '@/hooks/useActiveLocale';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { ROUTES } from '@/navigation/routes';
@@ -24,10 +25,15 @@ export const TvListScreen = () => {
   const language = useActiveLocale();
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(INITIAL_PAGE);
+  const [genreId, setGenreId] = useState<number | null>(null);
+  const [sortBy, setSortBy] = useState<SortBy>('popularity');
   const debouncedSearch = useDebouncedValue(search);
   const isSearching = debouncedSearch.trim().length > 0;
 
-  const popularQuery = useGetPopularTvQuery({ page, language }, { skip: isSearching });
+  const popularQuery = useGetPopularTvQuery(
+    { page, language, genreId: genreId ?? undefined, sortBy },
+    { skip: isSearching },
+  );
   const searchQuery = useSearchTvQuery(
     { query: debouncedSearch, page, language },
     { skip: !isSearching },
@@ -37,6 +43,16 @@ export const TvListScreen = () => {
 
   const handleSearchChange = useCallback((text: string) => {
     setSearch(text);
+    setPage(INITIAL_PAGE);
+  }, []);
+
+  const handleGenreChange = useCallback((nextGenreId: number | null) => {
+    setGenreId(nextGenreId);
+    setPage(INITIAL_PAGE);
+  }, []);
+
+  const handleSortChange = useCallback((nextSortBy: SortBy) => {
+    setSortBy(nextSortBy);
     setPage(INITIAL_PAGE);
   }, []);
 
@@ -73,6 +89,13 @@ export const TvListScreen = () => {
       onEndReached={handleEndReached}
       searchValue={search}
       onSearchChange={handleSearchChange}
+      title={t('navigation.tvTab')}
+      subtitle={t('listHeader.tvSubtitle')}
+      mediaType="tv"
+      genreId={genreId}
+      onGenreChange={handleGenreChange}
+      sortBy={sortBy}
+      onSortChange={handleSortChange}
     />
   );
 };

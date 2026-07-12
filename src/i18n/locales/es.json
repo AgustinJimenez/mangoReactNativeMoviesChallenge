@@ -1,5 +1,10 @@
 {
   "retry": "Reintentar",
+  "common": {
+    "dismiss": "Cerrar",
+    "goBack": "Volver",
+    "staleDataNotice": "No se pudo actualizar, mostrando datos guardados"
+  },
   "errorBoundary": {
     "title": "Algo salió mal"
   },
@@ -20,11 +25,17 @@
     "add": "Agregar a favoritos",
     "remove": "Quitar de favoritos"
   },
-  "listTemplate": {
-    "staleDataNotice": "No se pudo actualizar, mostrando datos guardados"
-  },
   "detailsTemplate": {
-    "overview": "Sinopsis"
+    "overview": "Sinopsis",
+    "cast": "Reparto",
+    "trailer": "Tráiler",
+    "officialTrailer": "Tráiler oficial",
+    "youtube": "YouTube",
+    "recommendations": "Recomendaciones",
+    "votes": "{{count}} votos"
+  },
+  "shareButton": {
+    "label": "Compartir"
   },
   "mediaList": {
     "emptyDefault": "No hay resultados",
@@ -38,8 +49,56 @@
     "tvTab": "Series",
     "favoritesTab": "Favoritos"
   },
+  "listHeader": {
+    "moviesSubtitle": "Descubrí películas populares",
+    "tvSubtitle": "Descubrí series populares",
+    "favoritesSubtitle": "Tus películas y series guardadas"
+  },
   "offlineBanner": {
     "message": "Sin conexión a internet"
+  },
+  "filtersModal": {
+    "title": "Filtros"
+  },
+  "genreFilter": {
+    "label": "Género",
+    "all": "Todas"
+  },
+  "sort": {
+    "label": "Ordenar por",
+    "popularity": "Popularidad",
+    "rating": "Mejor puntuadas",
+    "newest": "Más recientes",
+    "title": "Título A-Z"
+  },
+  "genres": {
+    "action": "Acción",
+    "adventure": "Aventura",
+    "animation": "Animación",
+    "comedy": "Comedia",
+    "crime": "Crimen",
+    "documentary": "Documental",
+    "drama": "Drama",
+    "family": "Familia",
+    "fantasy": "Fantasía",
+    "history": "Historia",
+    "horror": "Terror",
+    "music": "Música",
+    "mystery": "Misterio",
+    "romance": "Romance",
+    "scienceFiction": "Ciencia ficción",
+    "tvMovie": "Película de TV",
+    "thriller": "Suspenso",
+    "war": "Bélica",
+    "western": "Western",
+    "actionAdventure": "Acción y aventura",
+    "kids": "Infantil",
+    "news": "Noticias",
+    "reality": "Reality",
+    "sciFiFantasy": "Ciencia ficción y fantasía",
+    "soap": "Telenovela",
+    "talk": "Talk show",
+    "warPolitics": "Guerra y política"
   },
   "smokeTestPlaceholder": "Prueba de NativeWind"
 }

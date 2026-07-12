@@ -23,7 +23,7 @@ const TvTabIcon = ({ color, size, focused }: TabIconProps) => (
   <Ionicons name={focused ? 'tv' : 'tv-outline'} size={size} color={color} />
 );
 const FavoritesTabIcon = ({ color, size, focused }: TabIconProps) => (
-  <Ionicons name={focused ? 'star' : 'star-outline'} size={size} color={color} />
+  <Ionicons name={focused ? 'heart' : 'heart-outline'} size={size} color={color} />
 );
 
 const Tab = createBottomTabNavigator<RootTabParamList>();

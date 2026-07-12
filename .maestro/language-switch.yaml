@@ -4,7 +4,9 @@
 appId: com.mango.moviesapp
 ---
 - launchApp
-- assertVisible: 'Movies'
+- extendedWaitUntil:
+    visible: 'Movies'
+    timeout: 20000
 - tapOn: 'ES'
 - assertVisible: 'Películas'
 - tapOn: 'EN'

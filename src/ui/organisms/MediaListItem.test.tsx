@@ -11,6 +11,8 @@ const MOVIE: Media = {
   posterPath: '/pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg',
   voteAverage: 8.4,
   voteCount: 26000,
+  overview: 'A ticking-time-bomb insomniac and a slippery soap salesman...',
+  genreIds: [18, 53],
 };
 
 describe('MediaListItem', () => {
@@ -19,6 +21,21 @@ describe('MediaListItem', () => {
 
     expect(getByText('Fight Club')).toBeTruthy();
     expect(getByText('8.4')).toBeTruthy();
+  });
+
+  it('renders resolved genre names and the overview', () => {
+    const { getByText } = renderWithProviders(<MediaListItem media={MOVIE} onPress={() => {}} />);
+
+    expect(getByText('Drama • Thriller')).toBeTruthy();
+    expect(getByText('A ticking-time-bomb insomniac and a slippery soap salesman...')).toBeTruthy();
+  });
+
+  it('omits the genre line when there are no known genre ids', () => {
+    const { queryByText } = renderWithProviders(
+      <MediaListItem media={{ ...MOVIE, genreIds: [] }} onPress={() => {}} />,
+    );
+
+    expect(queryByText('Drama • Thriller')).toBeNull();
   });
 
   it('shows "No votes" instead of a score when voteCount is 0', () => {
