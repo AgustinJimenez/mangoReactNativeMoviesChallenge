@@ -62,6 +62,19 @@ export const MoviesListScreen = () => {
     }
   }, [data]);
 
+  // setPage(INITIAL_PAGE) alone forces a refetch via forceRefetch's
+  // page-changed check (see getPopularMovies/searchMovies in tmdbApi.ts) —
+  // but only when page actually changes. If the user pulls to refresh while
+  // already on page 1, the state setter would be a no-op and nothing would
+  // refetch, so that case calls refetch() directly instead.
+  const handleRefresh = useCallback(() => {
+    if (page === INITIAL_PAGE) {
+      refetch();
+    } else {
+      setPage(INITIAL_PAGE);
+    }
+  }, [page, refetch]);
+
   const handlePressMedia = useCallback(
     (media: Media) => {
       navigation.navigate(ROUTES.MOVIE_DETAILS, { id: media.id });
@@ -87,6 +100,7 @@ export const MoviesListScreen = () => {
       emptyMessage={isSearching ? t('mediaList.emptySearch') : t('mediaList.emptyDefault')}
       hasNextPage={!!data && data.page < data.totalPages}
       onEndReached={handleEndReached}
+      onRefresh={handleRefresh}
       searchValue={search}
       onSearchChange={handleSearchChange}
       title={t('navigation.moviesTab')}

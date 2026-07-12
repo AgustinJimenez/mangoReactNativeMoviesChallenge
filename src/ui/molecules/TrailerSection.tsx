@@ -82,6 +82,7 @@ export const TrailerSection = ({ trailerKey }: TrailerSectionProps) => {
         onPress={handlePress}
         accessibilityRole="button"
         accessibilityLabel={t('detailsTemplate.officialTrailer')}
+        accessibilityHint={t('detailsTemplate.officialTrailerHint')}
         className="flex-row items-center gap-md"
       >
         <TrailerThumbnail trailerKey={trailerKey} />

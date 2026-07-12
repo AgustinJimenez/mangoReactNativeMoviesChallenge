@@ -123,6 +123,7 @@ export const DetailsSkeleton = () => {
       className="flex-1 gap-lg bg-background pb-lg"
       accessibilityRole="progressbar"
       accessibilityLabel={t('loadingState.message')}
+      accessibilityHint={t('loadingState.hint')}
     >
       <SkeletonBackdropAndPoster />
       <SkeletonGenres />

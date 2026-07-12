@@ -30,6 +30,7 @@ export const SortList = ({ value, onChange }: SortListProps) => {
             accessibilityRole="button"
             accessibilityState={{ selected: isSelected }}
             accessibilityLabel={t(`sort.${option}`)}
+            accessibilityHint={t('sort.optionHint')}
             className={rowClassName}
           >
             <Text className={labelClassName}>{t(`sort.${option}`)}</Text>

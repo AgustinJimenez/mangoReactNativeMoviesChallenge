@@ -1,9 +1,13 @@
 {
   "retry": "Reintentar",
+  "retryHint": "Intenta cargar el contenido de nuevo",
   "common": {
     "dismiss": "Cerrar",
     "goBack": "Volver",
-    "staleDataNotice": "No se pudo actualizar, mostrando datos guardados"
+    "goBackHint": "Navega a la pantalla anterior",
+    "dismissHint": "Aplica tu selección y cierra",
+    "staleDataNotice": "No se pudo actualizar, mostrando datos guardados",
+    "openDetailsHint": "Abre la pantalla de detalles de este título"
   },
   "errorBoundary": {
     "title": "Algo salió mal"
@@ -13,29 +17,39 @@
     "generic": "No pudimos cargar el contenido"
   },
   "loadingState": {
-    "message": "Cargando…"
+    "message": "Cargando…",
+    "hint": "Esperá mientras se carga el contenido"
   },
   "rating": {
     "noVotes": "Sin votos"
   },
   "searchBar": {
-    "placeholder": "Buscar…"
+    "placeholder": "Buscar…",
+    "hint": "Busca películas y series a medida que escribís",
+    "filterHint": "Abre las opciones de filtro por género y orden"
   },
   "favoriteButton": {
     "add": "Agregar a favoritos",
-    "remove": "Quitar de favoritos"
+    "addHint": "Guarda este título en tu lista de favoritos",
+    "remove": "Quitar de favoritos",
+    "removeHint": "Quita este título de tu lista de favoritos"
   },
   "detailsTemplate": {
     "overview": "Sinopsis",
     "cast": "Reparto",
     "trailer": "Tráiler",
     "officialTrailer": "Tráiler oficial",
+    "officialTrailerHint": "Abre el tráiler en YouTube",
     "youtube": "YouTube",
     "recommendations": "Recomendaciones",
     "votes": "{{count}} votos"
   },
   "shareButton": {
-    "label": "Compartir"
+    "label": "Compartir",
+    "hint": "Abre las opciones para compartir este título"
+  },
+  "languageSwitcher": {
+    "hint": "Cambia el idioma de la app"
   },
   "mediaList": {
     "emptyDefault": "No hay resultados",
@@ -62,14 +76,16 @@
   },
   "genreFilter": {
     "label": "Género",
-    "all": "Todas"
+    "all": "Todas",
+    "chipHint": "Filtra la lista por este género"
   },
   "sort": {
     "label": "Ordenar por",
     "popularity": "Popularidad",
     "rating": "Mejor puntuadas",
     "newest": "Más recientes",
-    "title": "Título A-Z"
+    "title": "Título A-Z",
+    "optionHint": "Ordena la lista según esta opción"
   },
   "genres": {
     "action": "Acción",

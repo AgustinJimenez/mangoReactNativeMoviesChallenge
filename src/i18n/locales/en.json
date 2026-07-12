@@ -1,9 +1,13 @@
 {
   "retry": "Retry",
+  "retryHint": "Tries loading the content again",
   "common": {
     "dismiss": "Close",
     "goBack": "Go back",
-    "staleDataNotice": "Couldn't refresh, showing saved data"
+    "goBackHint": "Navigates to the previous screen",
+    "dismissHint": "Applies your selections and closes",
+    "staleDataNotice": "Couldn't refresh, showing saved data",
+    "openDetailsHint": "Opens the details screen for this title"
   },
   "errorBoundary": {
     "title": "Something went wrong"
@@ -13,29 +17,39 @@
     "generic": "We couldn't load this content"
   },
   "loadingState": {
-    "message": "Loading…"
+    "message": "Loading…",
+    "hint": "Please wait while the content loads"
   },
   "rating": {
     "noVotes": "No votes"
   },
   "searchBar": {
-    "placeholder": "Search…"
+    "placeholder": "Search…",
+    "hint": "Searches movies and TV shows as you type",
+    "filterHint": "Opens filter options for genre and sort order"
   },
   "favoriteButton": {
     "add": "Add to favorites",
-    "remove": "Remove from favorites"
+    "addHint": "Saves this title to your favorites list",
+    "remove": "Remove from favorites",
+    "removeHint": "Removes this title from your favorites list"
   },
   "detailsTemplate": {
     "overview": "Overview",
     "cast": "Cast",
     "trailer": "Trailer",
     "officialTrailer": "Official Trailer",
+    "officialTrailerHint": "Opens the trailer in YouTube",
     "youtube": "YouTube",
     "recommendations": "Recommendations",
     "votes": "{{count}} votes"
   },
   "shareButton": {
-    "label": "Share"
+    "label": "Share",
+    "hint": "Opens the share sheet for this title"
+  },
+  "languageSwitcher": {
+    "hint": "Changes the app language"
   },
   "mediaList": {
     "emptyDefault": "No results",
@@ -62,14 +76,16 @@
   },
   "genreFilter": {
     "label": "Genre",
-    "all": "All"
+    "all": "All",
+    "chipHint": "Filters the list to this genre"
   },
   "sort": {
     "label": "Sort by",
     "popularity": "Popularity",
     "rating": "Highest Rated",
     "newest": "Newest",
-    "title": "Title A-Z"
+    "title": "Title A-Z",
+    "optionHint": "Sorts the list by this option"
   },
   "genres": {
     "action": "Action",

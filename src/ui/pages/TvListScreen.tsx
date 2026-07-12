@@ -62,6 +62,16 @@ export const TvListScreen = () => {
     }
   }, [data]);
 
+  // See MoviesListScreen's handleRefresh for why the already-on-page-1
+  // case needs an explicit refetch() instead of relying on setPage.
+  const handleRefresh = useCallback(() => {
+    if (page === INITIAL_PAGE) {
+      refetch();
+    } else {
+      setPage(INITIAL_PAGE);
+    }
+  }, [page, refetch]);
+
   const handlePressMedia = useCallback(
     (media: Media) => {
       navigation.navigate(ROUTES.TV_DETAILS, { id: media.id });
@@ -87,6 +97,7 @@ export const TvListScreen = () => {
       emptyMessage={isSearching ? t('mediaList.emptySearch') : t('mediaList.emptyDefault')}
       hasNextPage={!!data && data.page < data.totalPages}
       onEndReached={handleEndReached}
+      onRefresh={handleRefresh}
       searchValue={search}
       onSearchChange={handleSearchChange}
       title={t('navigation.tvTab')}

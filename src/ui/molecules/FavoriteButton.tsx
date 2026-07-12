@@ -33,6 +33,7 @@ export const FavoriteButton = memo(({ id, mediaType }: FavoriteButtonProps) => {
   const scale = useSharedValue(BASE_SCALE);
 
   const label = isFavorite ? t('favoriteButton.remove') : t('favoriteButton.add');
+  const hint = isFavorite ? t('favoriteButton.removeHint') : t('favoriteButton.addHint');
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
@@ -48,6 +49,7 @@ export const FavoriteButton = memo(({ id, mediaType }: FavoriteButtonProps) => {
       onPress={handlePress}
       accessibilityRole="button"
       accessibilityLabel={label}
+      accessibilityHint={hint}
       testID="favorite-button"
       className={`size-10 items-center justify-center rounded-full border ${
         isFavorite ? 'border-primary bg-primary/10' : 'border-border bg-transparent'

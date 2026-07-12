@@ -20,6 +20,7 @@ export const ErrorState = ({ status, onRetry }: ErrorStateProps) => {
         onPress={onRetry}
         accessibilityRole="button"
         accessibilityLabel={t('retry')}
+        accessibilityHint={t('retryHint')}
         className="rounded-full bg-primary px-lg py-sm"
       >
         <Text className="font-semibold text-background">{t('retry')}</Text>

@@ -37,6 +37,7 @@ export const SearchBar = ({
         returnKeyType="search"
         autoCorrect={false}
         accessibilityLabel={placeholder}
+        accessibilityHint={t('searchBar.hint')}
         testID="search-bar-input"
         className="flex-1 text-base text-text"
       />
@@ -45,6 +46,7 @@ export const SearchBar = ({
           onPress={onFilterPress}
           accessibilityRole="button"
           accessibilityLabel={t('filtersModal.title')}
+          accessibilityHint={t('searchBar.filterHint')}
           testID="search-bar-filter-button"
           className="relative"
         >

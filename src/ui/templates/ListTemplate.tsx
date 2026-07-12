@@ -21,6 +21,7 @@ type ListTemplateProps<T> = {
   emptyMessage: string;
   hasNextPage?: boolean;
   onEndReached?: () => void;
+  onRefresh?: () => void;
   searchValue?: string;
   onSearchChange?: (text: string) => void;
   title?: string;
@@ -49,6 +50,7 @@ export const ListTemplate = <T,>({
   emptyMessage,
   hasNextPage = false,
   onEndReached,
+  onRefresh,
   searchValue,
   onSearchChange,
   title,
@@ -96,6 +98,7 @@ export const ListTemplate = <T,>({
           emptyMessage={emptyMessage}
           hasNextPage={hasNextPage}
           onEndReached={onEndReached}
+          onRefresh={onRefresh}
         />
       </View>
     </View>

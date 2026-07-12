@@ -40,6 +40,7 @@ export const GenreChips = ({ mediaType, value, onChange }: GenreChipsProps) => {
             accessibilityRole="button"
             accessibilityState={{ selected: isSelected }}
             accessibilityLabel={chip.label}
+            accessibilityHint={t('genreFilter.chipHint')}
             className={chipClassName}
           >
             <Text className={labelClassName}>{chip.label}</Text>

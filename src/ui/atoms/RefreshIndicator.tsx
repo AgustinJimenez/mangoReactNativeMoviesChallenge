@@ -39,7 +39,7 @@ export const RefreshIndicator = () => {
   }));
 
   return (
-    <View className="h-0.5 overflow-hidden bg-surface">
+    <View className="h-0.5 overflow-hidden bg-surface" testID="refresh-indicator">
       <Animated.View style={animatedStyle} className="h-full w-1/3 rounded-full bg-primary" />
     </View>
   );

@@ -1,9 +1,9 @@
 import { useCallback } from 'react';
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator, RefreshControl } from 'react-native';
 import type { ListRenderItem } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
-import { spacing } from '@/theme/tokens';
+import { colors, spacing } from '@/theme/tokens';
 import { EmptyState } from '@/ui/molecules/EmptyState';
 import { ErrorState } from '@/ui/molecules/ErrorState';
 import { LoadingState } from '@/ui/molecules/LoadingState';
@@ -25,6 +25,23 @@ const listContentContainerStyle = {
   gap: spacing.sm,
 };
 
+// Every list this renders (Movies/TV/Favorites, the latter via
+// FavoriteEntryItem) uses MediaListItem's card as its row. Measured
+// on-device via uiautomator bounds (275 physical px at 420 density ≈
+// 105dp) rather than derived from the card's own padding/poster-aspect
+// math, which didn't quite match the real rendered value closely enough to
+// trust blindly. getItemLayout only needs to be close — React Native still
+// does real layout, this just skips the initial measurement pass and
+// enables scrollToIndex. Re-measure rather than re-deriving by hand if
+// MediaListItem's card design changes height.
+const ITEM_HEIGHT = 105;
+
+const getItemLayout = (_data: unknown, index: number) => ({
+  length: ITEM_HEIGHT,
+  offset: (ITEM_HEIGHT + spacing.sm) * index + spacing.md,
+  index,
+});
+
 type ListBodyProps<T> = {
   data: T[] | undefined;
   keyExtractor: (item: T) => string;
@@ -37,6 +54,10 @@ type ListBodyProps<T> = {
   emptyMessage: string;
   hasNextPage: boolean;
   onEndReached?: () => void;
+  // Omitted entirely by FavoritesScreen — that list reads straight from
+  // Redux state with no backing query to refetch, so there's nothing for
+  // a pull gesture to do there.
+  onRefresh?: () => void;
 };
 
 // The "main content" area below ListTemplate's header/search/filters —
@@ -54,6 +75,7 @@ export const ListBody = <T,>({
   emptyMessage,
   hasNextPage,
   onEndReached,
+  onRefresh,
 }: ListBodyProps<T>) => {
   const hasData = !!data && data.length > 0;
 
@@ -81,6 +103,14 @@ export const ListBody = <T,>({
   }
 
   const listFooter = isFetching && hasNextPage ? <ActivityIndicator className="py-md" /> : null;
+  const refreshControl = onRefresh ? (
+    <RefreshControl
+      refreshing={isFetching}
+      onRefresh={onRefresh}
+      tintColor={colors.primary}
+      colors={[colors.primary]}
+    />
+  ) : undefined;
 
   return (
     <Animated.FlatList
@@ -93,6 +123,9 @@ export const ListBody = <T,>({
       removeClippedSubviews
       ListFooterComponent={listFooter}
       contentContainerStyle={listContentContainerStyle}
+      refreshControl={refreshControl}
+      getItemLayout={getItemLayout}
+      testID="media-list"
     />
   );
 };

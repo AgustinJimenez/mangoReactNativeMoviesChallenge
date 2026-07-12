@@ -18,24 +18,29 @@ type RecommendationCardProps = {
   onPress: (media: Media) => void;
 };
 
-const RecommendationCard = ({ media, onPress }: RecommendationCardProps) => (
-  <Pressable
-    onPress={() => onPress(media)}
-    accessibilityRole="button"
-    accessibilityLabel={media.title}
-    className="gap-xs"
-    style={cardStyle}
-  >
-    <Poster path={media.posterPath} title={media.title} size="w185" />
-    <Text numberOfLines={2} className="text-xs font-semibold text-text">
-      {media.title}
-    </Text>
-    <View className="flex-row items-center gap-xs">
-      <Ionicons name="star" size={STAR_ICON_SIZE} color={colors.primary} />
-      <Text className="text-xs text-textMuted">{media.voteAverage.toFixed(1)}</Text>
-    </View>
-  </Pressable>
-);
+const RecommendationCard = ({ media, onPress }: RecommendationCardProps) => {
+  const { t } = useTranslation();
+
+  return (
+    <Pressable
+      onPress={() => onPress(media)}
+      accessibilityRole="button"
+      accessibilityLabel={media.title}
+      accessibilityHint={t('common.openDetailsHint')}
+      className="gap-xs"
+      style={cardStyle}
+    >
+      <Poster path={media.posterPath} title={media.title} size="w185" />
+      <Text numberOfLines={2} className="text-xs font-semibold text-text">
+        {media.title}
+      </Text>
+      <View className="flex-row items-center gap-xs">
+        <Ionicons name="star" size={STAR_ICON_SIZE} color={colors.primary} />
+        <Text className="text-xs text-textMuted">{media.voteAverage.toFixed(1)}</Text>
+      </View>
+    </Pressable>
+  );
+};
 
 type RecommendationsListProps = {
   recommendations: Media[];

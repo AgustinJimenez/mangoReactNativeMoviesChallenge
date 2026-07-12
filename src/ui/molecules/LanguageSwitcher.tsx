@@ -6,7 +6,7 @@ import type { Locale } from '@/types/common';
 const LOCALES: Locale[] = ['es', 'en'];
 
 export const LanguageSwitcher = () => {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   return (
     <View className="flex-row gap-xs">
@@ -25,6 +25,7 @@ export const LanguageSwitcher = () => {
             onPress={() => i18n.changeLanguage(locale)}
             accessibilityRole="button"
             accessibilityLabel={locale}
+            accessibilityHint={t('languageSwitcher.hint')}
             className={pillClassName}
           >
             <Text className={labelClassName}>{locale}</Text>

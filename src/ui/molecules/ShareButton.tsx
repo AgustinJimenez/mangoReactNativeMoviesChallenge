@@ -26,6 +26,7 @@ export const ShareButton = ({ title, message }: ShareButtonProps) => {
       onPress={handlePress}
       accessibilityRole="button"
       accessibilityLabel={t('shareButton.label')}
+      accessibilityHint={t('shareButton.hint')}
       className="size-10 items-center justify-center rounded-full bg-black/25"
     >
       <Ionicons name="share-social-outline" size={SHARE_ICON_SIZE} color={colors.text} />

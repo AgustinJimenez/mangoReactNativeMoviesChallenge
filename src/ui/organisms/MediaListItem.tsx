@@ -26,6 +26,7 @@ export const MediaListItem = memo(({ media, onPress }: MediaListItemProps) => {
       onPress={() => onPress(media)}
       accessibilityRole="button"
       accessibilityLabel={media.title}
+      accessibilityHint={t('common.openDetailsHint')}
       testID="media-list-item"
       className="flex-row items-center gap-sm rounded-2xl border border-border bg-surface p-sm"
     >

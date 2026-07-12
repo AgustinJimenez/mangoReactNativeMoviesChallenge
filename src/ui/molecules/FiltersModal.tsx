@@ -45,6 +45,7 @@ const FiltersSheet = ({
           onPress={onClose}
           accessibilityRole="button"
           accessibilityLabel={t('common.dismiss')}
+          accessibilityHint={t('common.dismissHint')}
         >
           <Ionicons name="close" size={CLOSE_ICON_SIZE} color={colors.textMuted} />
         </Pressable>
@@ -121,6 +122,7 @@ export const FiltersModal = ({
         onPress={handleClose}
         accessibilityRole="button"
         accessibilityLabel={t('common.dismiss')}
+        accessibilityHint={t('common.dismissHint')}
       >
         <ScrollView style={modalScrollStyle}>
           <FiltersSheet

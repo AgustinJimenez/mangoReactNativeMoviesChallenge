@@ -120,4 +120,20 @@ describe('MoviesListScreen', () => {
       expect(searchCall).toBeTruthy();
     });
   });
+
+  it('refetches page 1 when pulled to refresh while already on page 1', async () => {
+    jest
+      .mocked(globalThis.fetch)
+      .mockImplementation(async () => jsonResponse(POPULAR_MOVIES_RESPONSE));
+
+    const { getByText, getByTestId } = renderMoviesListScreen();
+    await waitFor(() => expect(getByText('Fight Club')).toBeTruthy());
+
+    const initialCallCount = jest.mocked(globalThis.fetch).mock.calls.length;
+    fireEvent(getByTestId('media-list'), 'refresh');
+
+    await waitFor(() => {
+      expect(jest.mocked(globalThis.fetch).mock.calls.length).toBeGreaterThan(initialCallCount);
+    });
+  });
 });

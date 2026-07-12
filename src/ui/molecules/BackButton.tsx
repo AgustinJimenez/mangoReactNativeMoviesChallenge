@@ -21,6 +21,7 @@ export const BackButton = () => {
       onPress={() => navigation.goBack()}
       accessibilityRole="button"
       accessibilityLabel={t('common.goBack')}
+      accessibilityHint={t('common.goBackHint')}
       className="size-10 items-center justify-center rounded-full bg-black/25"
     >
       <Ionicons name="arrow-back" size={BACK_ICON_SIZE} color={colors.text} />
