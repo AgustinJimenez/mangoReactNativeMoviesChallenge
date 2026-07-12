@@ -15,6 +15,12 @@ export const OfflineBanner = () => {
   const { t } = useTranslation();
   const [isConnected, setIsConnected] = useState(true);
 
+  // react-doctor false positive: NetInfo.addEventListener returns an
+  // unsubscribe function directly, and returning that call's result from
+  // useEffect IS valid cleanup (React calls it on unmount) — equivalent to
+  // `return () => unsubscribe()`, just without the extra wrapper. The rule's
+  // pattern-matcher only recognizes the explicit-arrow-function form.
+  // react-doctor-disable-next-line react-doctor/effect-needs-cleanup
   useEffect(() => {
     return NetInfo.addEventListener((state) => {
       setIsConnected(state.isConnected ?? true);

@@ -63,6 +63,18 @@ type ListBodyProps<T> = {
 // The "main content" area below ListTemplate's header/search/filters —
 // switches between loading/error/empty states and the actual results
 // FlatList based on query state, shared by every list screen in the app.
+//
+// react-doctor flags isLoading/isFetching/isError/onRefresh as a
+// hard-to-test boolean-prop combination. These aren't independent on/off
+// toggles though — they're RTK Query's own status flags (the same
+// isLoading/isFetching/isError shape every query hook in this app already
+// returns), passed straight through rather than re-derived into a
+// discriminated union. Splitting this into named variants would mean
+// re-deriving that union at every call site instead of just forwarding
+// the query result, for a component that's already covered by
+// MoviesListScreen/TvListScreen/FavoritesScreen's tests exercising each
+// state.
+// react-doctor-disable-next-line react-doctor/no-many-boolean-props
 export const ListBody = <T,>({
   data,
   keyExtractor,

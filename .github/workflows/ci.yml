@@ -55,6 +55,14 @@ jobs:
       - name: Build debug APK
         run: cd android && ./gradlew assembleDebug
       - name: Install Maestro CLI
+        # react-doctor flags the curl below as a curl-pipe-to-bash trust-
+        # boundary risk (react-doctor/plugin-update-trust-risk, disabled
+        # project-wide in doctor.config.js — see that file for why: inline
+        # suppression comments aren't recognized inside a YAML run: | block).
+        # It's Maestro's own official documented install command
+        # (https://docs.maestro.dev/getting-started/installing-maestro) —
+        # same pattern as rustup/nvm/homebrew installers — and Maestro
+        # doesn't publish a pinned/checksummed alternative for CI use.
         run: |
           curl -Ls "https://get.maestro.mobile.dev" | bash
           echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"

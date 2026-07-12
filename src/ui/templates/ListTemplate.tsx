@@ -38,6 +38,12 @@ type ListTemplateProps<T> = {
   onSortChange?: (sortBy: SortBy) => void;
 };
 
+// react-doctor flags isLoading/isFetching/isError/onRefresh as a
+// hard-to-test boolean-prop combination — same reasoning as ListBody's
+// suppression just above it in the tree: these are RTK Query's own status
+// flags forwarded as-is, not independent toggles, and each state is
+// already covered by the list screens' own tests.
+// react-doctor-disable-next-line react-doctor/no-many-boolean-props
 export const ListTemplate = <T,>({
   data,
   keyExtractor,
