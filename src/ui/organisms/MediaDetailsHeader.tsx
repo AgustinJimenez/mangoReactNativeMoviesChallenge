@@ -1,9 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { FlatList, Text, View } from 'react-native';
+import type { ListRenderItem } from 'react-native';
 
 import { colors } from '@/theme/tokens';
-import type { MediaDetails } from '@/types/media';
+import type { Genre, MediaDetails } from '@/types/media';
 import { Backdrop } from '@/ui/atoms/Backdrop';
 import { Badge } from '@/ui/atoms/Badge';
 import { Poster } from '@/ui/atoms/Poster';
@@ -25,6 +26,8 @@ const POSTER_OVERLAP = 64;
 const posterOverlapStyle = { marginTop: -POSTER_OVERLAP };
 
 const GenreSeparator = () => <View className="w-xs" />;
+
+const renderGenreBadge: ListRenderItem<Genre> = ({ item }) => <Badge label={item.name} />;
 
 type DateAndRuntimeProps = {
   releaseDate: string;
@@ -120,7 +123,7 @@ export const MediaDetailsHeader = ({ media }: MediaDetailsHeaderProps) => {
           horizontal
           data={media.genres}
           keyExtractor={(genre) => String(genre.id)}
-          renderItem={({ item }) => <Badge label={item.name} />}
+          renderItem={renderGenreBadge}
           ItemSeparatorComponent={GenreSeparator}
           showsHorizontalScrollIndicator={false}
         />
