@@ -27,7 +27,11 @@ export const SearchBar = ({
   const placeholder = t('searchBar.placeholder');
 
   return (
-    <View className="flex-row items-center gap-sm rounded-full border border-border bg-surface px-md py-xs">
+    // min-h-10 (matches BackButton/FavoriteButton/ShareButton's size-10):
+    // iOS's TextInput renders noticeably shorter than Android's for the same
+    // font size/padding (no built-in leading), so py-xs alone left the whole
+    // row visibly thin on iOS specifically.
+    <View className="min-h-10 flex-row items-center gap-sm rounded-full border border-border bg-surface px-md py-xs">
       <Ionicons name="search" size={SEARCH_ICON_SIZE} color={colors.textMuted} />
       <TextInput
         value={value}

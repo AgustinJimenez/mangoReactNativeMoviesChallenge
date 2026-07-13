@@ -31,5 +31,10 @@ export const stackScreenOptions = {
     headerTransparent: true,
     headerStyle: { backgroundColor: 'transparent' },
     headerLeft: () => <BackButton />,
+    // iOS 26+ defaults this to 'automatic', which paints its own gradient
+    // at the top edge on top of the backdrop — visible even at scrollY: 0,
+    // competing with DetailsHeaderBackground's own progressive tint (see
+    // useMediaDetailsScreen.ts). Not needed on Android (no such default).
+    scrollEdgeEffects: { top: 'hidden' },
   } satisfies NativeStackNavigationOptions,
 };
