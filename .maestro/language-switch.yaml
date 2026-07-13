@@ -9,7 +9,7 @@ appId: com.mango.moviesapp
 - launchApp
 - extendedWaitUntil:
     visible: 'Movies'
-    timeout: 40000
+    timeout: 90000
 - tapOn: 'ES'
 - assertVisible: 'Películas'
 - stopApp
@@ -17,6 +17,6 @@ appId: com.mango.moviesapp
     clearState: false
 - extendedWaitUntil:
     visible: 'Películas'
-    timeout: 40000
+    timeout: 90000
 - tapOn: 'EN'
 - assertVisible: 'Movies'

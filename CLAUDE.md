@@ -87,29 +87,53 @@ exist`, every call, silently.** Cause: `expo-image` transitively loads
   fully rendered — that's emulator/Maestro flakiness, not app state; retry
   once before treating it as a regression.
 
-  On GitHub Actions CI, the very first e2e run to get this far failed
-  the same assertion with a ~25s gap between `Launch app... COMPLETED`
-  and the assertion failing (against the 20000ms timeout above), which
-  first read as "CI's emulator is just slower, needs more headroom" —
-  bumped every flow's timeout 20000 → 40000. The **next** run failed
-  the identical assertion again, this time with a ~43s gap — already
-  exceeding the doubled timeout, which is what proved the timeout
-  theory wrong rather than just needing round three. The real cause:
-  nothing in `ci.yml` ever started Metro. A debug APK has no embedded
-  JS bundle (`debuggableVariants` defaults to `["debug",
+  On GitHub Actions CI specifically, getting this flow genuinely green
+  took four rounds because three real, independent problems all
+  produced the identical symptom (`assertVisible: 'Movies'` timing out)
+  and had to be fixed one at a time to even see the next one:
+
+  1. **Timeout too short (a red herring on its own, but not entirely
+     wrong).** First run failed with a ~25s gap between `Launch app...
+COMPLETED` and the assertion failing, against the 20000ms timeout
+     — read as "CI's emulator is just slower." Bumped to 40000. The
+     next run failed again at ~43s, which proved _that specific_ bump
+     insufficient but didn't mean timeout wasn't part of the real
+     picture (see point 3).
+  2. **Nothing in `ci.yml` ever started Metro.** A debug APK has no
+     embedded JS bundle (`debuggableVariants` defaults to `["debug",
 "debugOptimized"]` in `android/app/build.gradle`) — it loads from
-  Metro at runtime same as any local debug build. `adb install` +
-  `launchApp` "succeeded" while the app was actually stuck on the red
-  "Unable to load script" screen the entire time; no `extendedWaitUntil`
-  length could ever make "Movies" appear on that screen. Fixed by
-  starting Metro as a background step before the emulator boots
-  (polling `curl http://localhost:8081/status` for
-  `packager-status:running` before proceeding) and `adb reverse
-tcp:8081 tcp:8081` inside `run-e2e-flows.sh` before `adb install` —
-  same pattern this session already confirmed works for a physical USB
-  device, not just an emulator. Left the 40000ms timeouts in place
-  since they're a reasonable margin regardless once the bundle actually
-  loads.
+     Metro at runtime same as any local debug build. `adb install` +
+     `launchApp` "succeeded" while the app was actually stuck on the
+     red "Unable to load script" screen the whole time. Fixed by
+     starting Metro as a background step before the emulator boots
+     (polling `curl http://localhost:8081/status` for
+     `packager-status:running`) and `adb reverse tcp:8081 tcp:8081`
+     inside `run-e2e-flows.sh` before `adb install`.
+  3. **`android/gradle.properties` builds an arm64-v8a-only APK; CI's
+     emulator is x86_64.** This was the one that made points 1 and 2
+     look like they hadn't worked at all — after both fixes above, the
+     assertion _still_ failed identically. The APK installs fine (no
+     `INSTALL_FAILED_NO_MATCHING_ABIS`) but has no native libraries
+     that actually run on x86_64, so it crashes back to the home
+     screen immediately on launch — confirmed by downloading Maestro's
+     own failure screenshot (`actions/upload-artifact` on
+     `~/.maestro/tests/`, see `ci.yml`), which showed the _emulator's
+     home screen_, not the app in any state. No log (Maestro's or
+     Metro's) distinguishes this from a slow load; only the screenshot
+     did. Fixed with `-PreactNativeArchitectures=x86_64` on the CI
+     build step.
+
+  Only once all three were fixed did Metro's log finally show a real
+  bundle transform completing (`BUNDLE ./index.js` reaching 1710/1711
+  modules) — proving the app was genuinely running and fetching the
+  bundle, just slower than 40000ms on a cold Metro cache with CI's
+  CPU. _That's_ when bumping the timeout was actually the right fix,
+  now for real: 40000 → 90000. The lesson isn't "don't trust the
+  timeout theory" — it's that a timeout bump is only diagnostic once
+  every other explanation for "the assertion never becomes true" has
+  been ruled out with actual evidence (a screenshot, a completed
+  bundle log), not inferred from a log that looks the same whether the
+  app is crashed, stuck, or just slow.
 
 - **A `horizontal` `FlatList` with no bounded height silently stretches to
   fill whatever vertical space its flex ancestors leave available,** and
@@ -262,39 +286,6 @@ t('...')}` (both string-typed branches). Fix is the same either way:
   `script: bash .github/scripts/run-e2e-flows.sh`, passing any needed
   values via the step's `env:` rather than interpolating `${{ }}` into the
   script text.
-
-- **CI's e2e job kept failing the same `assertVisible: 'Movies'` assertion
-  through three different fixes (Metro not running, timeout too short)
-  before finding the actual cause.** The real one: `android/gradle.properties`
-  sets `reactNativeArchitectures=arm64-v8a` (a local-machine speed
-  optimization for this repo's Apple Silicon dev environment), and CI's
-  `Build debug APK` step ran plain `./gradlew assembleDebug` with no
-  override — silently producing an arm64-v8a-only APK. CI's emulator runs
-  `arch: x86_64`. The APK _installs_ fine (`adb install` succeeded every
-  time, no `INSTALL_FAILED_NO_MATCHING_ABIS` — the system image apparently
-  tolerates it, maybe via ARM translation) but has no matching native
-  libraries (Hermes, Reanimated, ...) to actually run, so the app crashes
-  back to the home screen immediately on launch. No `extendedWaitUntil`
-  timeout length could ever fix that — "Movies" was never going to appear,
-  the app was never in the foreground at all. This was **not** visible from
-  Maestro's own log (`Launch app... COMPLETED` looks identical whether the
-  app is genuinely running or crashed instantly, since `launchApp` just
-  confirms the `am start` intent was issued, not that the app stayed up)
-  and not visible from Metro's log either (a real, correctly-configured dev
-  server, completely irrelevant to this bug). What finally proved it:
-  downloading Maestro's own failure screenshot (`actions/upload-artifact`
-  on `~/.maestro/tests/`, see the e2e job's steps) — it showed the
-  emulator's home screen, not the app in any state whatsoever. Fix:
-  `./gradlew assembleDebug -PreactNativeArchitectures=x86_64` in CI,
-  matching the README's already-documented override for exactly this
-  local-arch-vs-target-arch mismatch, just never applied to the CI
-  workflow when the local `gradle.properties` default was restricted.
-  Lesson: for any CI Android-emulator failure where the app never appears
-  at all (not a slow render, not a wrong-screen render — an entirely absent
-  app), check native library ABI match before chasing anything else;
-  a Maestro/Metro log can look completely healthy while missing this
-  entirely, and a downloaded failure screenshot settles it in one look
-  where several rounds of log-reading couldn't.
 
 ## Environment specifics (this machine)
 
