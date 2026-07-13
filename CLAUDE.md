@@ -128,15 +128,23 @@ COMPLETED` and the assertion failing, against the 20000ms timeout
   modules) — proving the app was genuinely running and fetching the
   bundle, just slower than 40000ms on a cold Metro cache with CI's
   CPU. _That's_ when bumping the timeout was actually the right fix,
-  now for real — except 40000 → 90000 still wasn't quite enough
-  either: the very next run failed at a 91.08s gap, 1.08s over that
-  new timeout, before finally landing on 120000 for real margin. The
-  lesson isn't "don't trust the timeout theory" — it's that a timeout
-  bump is only diagnostic once every other explanation for "the
-  assertion never becomes true" has been ruled out with actual
-  evidence (a screenshot, a completed bundle log), not inferred from a
-  log that looks the same whether the
-  app is crashed, stuck, or just slow.
+  now for real — except getting the actual number right took three
+  more rounds: 90000 missed by a 91.08s gap (1.08s over), the 120000
+  that followed missed by a 120.69s gap (0.69s over) — both times
+  Metro's log confirmed the same successful bundle completion
+  (`1710/1711` modules, no errors), so this wasn't a regression each
+  time, it was real run-to-run variance on shared CI runners landing
+  suspiciously close to whatever number was picked. Stopped chasing
+  the exact threshold and jumped to 240000 for real margin instead of
+  incrementing again. The lesson isn't "don't trust the timeout
+  theory" — it's that a timeout bump is only diagnostic once every
+  other explanation for "the assertion never becomes true" has been
+  ruled out with actual evidence (a screenshot, a completed bundle
+  log), not inferred from a log that looks the same whether the app is
+  crashed, stuck, or just slow — and once it _is_ confirmed to be
+  genuine variance, jump to a generous number rather than incrementing
+  by small multiples and burning another ~13min CI round-trip each
+  time to find out it wasn't quite enough again.
 
 - **A `horizontal` `FlatList` with no bounded height silently stretches to
   fill whatever vertical space its flex ancestors leave available,** and
