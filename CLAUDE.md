@@ -128,11 +128,14 @@ COMPLETED` and the assertion failing, against the 20000ms timeout
   modules) — proving the app was genuinely running and fetching the
   bundle, just slower than 40000ms on a cold Metro cache with CI's
   CPU. _That's_ when bumping the timeout was actually the right fix,
-  now for real: 40000 → 90000. The lesson isn't "don't trust the
-  timeout theory" — it's that a timeout bump is only diagnostic once
-  every other explanation for "the assertion never becomes true" has
-  been ruled out with actual evidence (a screenshot, a completed
-  bundle log), not inferred from a log that looks the same whether the
+  now for real — except 40000 → 90000 still wasn't quite enough
+  either: the very next run failed at a 91.08s gap, 1.08s over that
+  new timeout, before finally landing on 120000 for real margin. The
+  lesson isn't "don't trust the timeout theory" — it's that a timeout
+  bump is only diagnostic once every other explanation for "the
+  assertion never becomes true" has been ruled out with actual
+  evidence (a screenshot, a completed bundle log), not inferred from a
+  log that looks the same whether the
   app is crashed, stuck, or just slow.
 
 - **A `horizontal` `FlatList` with no bounded height silently stretches to

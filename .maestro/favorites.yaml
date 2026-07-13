@@ -6,11 +6,11 @@ appId: com.mango.moviesapp
 - launchApp
 - extendedWaitUntil:
     visible: 'Movies'
-    timeout: 90000
+    timeout: 120000
 - extendedWaitUntil:
     visible:
       id: 'media-list-item'
-    timeout: 90000
+    timeout: 120000
 - tapOn:
     id: 'favorite-button'
     index: 0
@@ -18,7 +18,7 @@ appId: com.mango.moviesapp
 - extendedWaitUntil:
     visible:
       id: 'media-list-item'
-    timeout: 90000
+    timeout: 120000
 - tapOn:
     id: 'favorite-button'
     index: 0
