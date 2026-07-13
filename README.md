@@ -5,6 +5,7 @@ A React Native movies/TV browser built against [The Movie Database (TMDB)](https
 <p align="center">
   <img src="docs/screenshots/movies-list.png" alt="Movies list screen" width="280" />
   <img src="docs/screenshots/movie-details.png" alt="Movie details screen" width="280" />
+  <img src="docs/screenshots/favorites.png" alt="Favorites screen" width="280" />
 </p>
 
 ## Prerequisites

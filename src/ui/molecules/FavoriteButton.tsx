@@ -57,7 +57,7 @@ export const FavoriteButton = memo(({ id, mediaType }: FavoriteButtonProps) => {
     >
       <Animated.View style={animatedStyle}>
         <Ionicons
-          name={isFavorite ? 'star' : 'star-outline'}
+          name={isFavorite ? 'heart' : 'heart-outline'}
           size={ICON_SIZE}
           color={isFavorite ? colors.primary : colors.text}
         />

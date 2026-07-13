@@ -5,23 +5,23 @@ import { createTestStore, renderWithProviders } from '@/testUtils';
 import { FavoriteButton } from '@/ui/molecules/FavoriteButton';
 
 describe('FavoriteButton', () => {
-  it('starts unfavorited and shows the outline star', () => {
+  it('starts unfavorited and shows the outline heart', () => {
     const { UNSAFE_getByProps: getIconByProps, getByLabelText } = renderWithProviders(
       <FavoriteButton id={550} mediaType="movie" />,
     );
 
-    expect(getIconByProps({ name: 'star-outline' })).toBeTruthy();
+    expect(getIconByProps({ name: 'heart-outline' })).toBeTruthy();
     expect(getByLabelText('Add to favorites')).toBeTruthy();
   });
 
-  it('toggles to favorited (filled star) when pressed', () => {
+  it('toggles to favorited (filled heart) when pressed', () => {
     const { UNSAFE_getByProps: getIconByProps, getByLabelText } = renderWithProviders(
       <FavoriteButton id={550} mediaType="movie" />,
     );
 
     fireEvent.press(getByLabelText('Add to favorites'));
 
-    expect(getIconByProps({ name: 'star' })).toBeTruthy();
+    expect(getIconByProps({ name: 'heart' })).toBeTruthy();
     expect(getByLabelText('Remove from favorites')).toBeTruthy();
   });
 
@@ -33,7 +33,7 @@ describe('FavoriteButton', () => {
     fireEvent.press(getByLabelText('Add to favorites'));
     fireEvent.press(getByLabelText('Remove from favorites'));
 
-    expect(getIconByProps({ name: 'star-outline' })).toBeTruthy();
+    expect(getIconByProps({ name: 'heart-outline' })).toBeTruthy();
   });
 
   it('reflects a favorite already present in the store', () => {
@@ -45,7 +45,7 @@ describe('FavoriteButton', () => {
       { store },
     );
 
-    expect(getIconByProps({ name: 'star' })).toBeTruthy();
+    expect(getIconByProps({ name: 'heart' })).toBeTruthy();
   });
 
   it('only reflects favorites matching both id and mediaType', () => {
@@ -57,6 +57,6 @@ describe('FavoriteButton', () => {
       { store },
     );
 
-    expect(getIconByProps({ name: 'star-outline' })).toBeTruthy();
+    expect(getIconByProps({ name: 'heart-outline' })).toBeTruthy();
   });
 });
