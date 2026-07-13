@@ -60,12 +60,6 @@ Then, with an Android emulator already booted (or a device connected):
 npm run android
 ```
 
-Or, on macOS with a simulator available:
-
-```sh
-npm run ios
-```
-
 Android debug builds only target `arm64-v8a` (`android/gradle.properties`'
 `reactNativeArchitectures`) — matches both an Apple Silicon Mac's emulator
 and most physical Android devices, but a debug APK built this way won't
@@ -75,6 +69,12 @@ with:
 
 ```sh
 cd android && ./gradlew assembleDebug -PreactNativeArchitectures=x86_64
+```
+
+Or, on macOS with a simulator available:
+
+```sh
+npm run ios
 ```
 
 ## Running tests
@@ -115,6 +115,5 @@ The full architecture writeup — state management, navigation, styling, caching
 ## Known limitations
 
 - **iOS is unverified on this development machine** (no Xcode installed here). The codebase targets both platforms with no Android-specific APIs, and `pod install`/native config follow the standard bare-RN + Expo-modules pattern, but the iOS build itself hasn't been run end-to-end in this environment.
-- **`mobile-mcp`** (the MCP server used for agent-driven interactive verification during development) is registered in this repo's Claude Code config but wasn't available mid-session (registering an MCP server requires a session restart to load) — interactive verification during development used direct `adb`/screenshot tooling instead, to the same effect.
 
 All four Maestro flows, all main app flows (browsing, search, details, favorites, language switching, offline banner) against the real TMDB API, and the full CI-equivalent local suite (typecheck/lint/unit tests/real debug build) have been verified end-to-end.
