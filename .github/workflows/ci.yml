@@ -52,8 +52,19 @@ jobs:
           java-version: 17
       - name: Write .env
         run: echo "TMDB_ACCESS_TOKEN=${{ secrets.TMDB_ACCESS_TOKEN }}" > .env
+      # -PreactNativeArchitectures=x86_64 overrides gradle.properties'
+      # reactNativeArchitectures=arm64-v8a (a local-machine speed optimization
+      # for this repo's Apple Silicon dev environment, see README/CLAUDE.md) —
+      # without it, this step silently builds an arm64-v8a-only APK, which
+      # installs fine on CI's x86_64 emulator (via ARM translation) but has
+      # no matching native libraries (Hermes, Reanimated, ...) to actually
+      # run: the app launches, crashes back to the home screen immediately,
+      # and no `extendedWaitUntil` timeout length could ever make "Movies"
+      # appear — confirmed by downloading Maestro's own failure screenshot
+      # (see "Upload Maestro debug artifacts" below), which showed the
+      # emulator's home screen, not the app in any state at all.
       - name: Build debug APK
-        run: cd android && ./gradlew assembleDebug
+        run: cd android && ./gradlew assembleDebug -PreactNativeArchitectures=x86_64
       - name: Install Maestro CLI
         # react-doctor flags the curl below as a curl-pipe-to-bash trust-
         # boundary risk (react-doctor/plugin-update-trust-risk, disabled
@@ -111,26 +122,16 @@ jobs:
           arch: x86_64
           profile: pixel_6
           script: bash .github/scripts/run-e2e-flows.sh
-      # Diagnostic only, temporary: if the Maestro flow above times out
-      # waiting for "Movies" to appear, this is the only way to tell whether
-      # Metro ever actually got a bundle request from the emulator (dead
-      # silence in this log = still not reaching Metro despite "Start Metro"
-      # passing and adb reverse succeeding) vs. a slow-but-real bundle build
-      # (log shows a request, just took a while) — indistinguishable from
-      # Maestro's own log alone, which just reports "timed out" either way.
-      # First run of this: log shows Metro's dev server came up fine, then
-      # only a non-fatal background "fusebox shell preparation" (DevTools
-      # auto-download) error — no bundle-request log line at all after
-      # that, suggesting the emulator never actually reached Metro despite
-      # both "Start Metro" and `adb reverse` succeeding as commands.
+      # Both steps below are cheap, permanent diagnostics for any future e2e
+      # failure, not just this session's — kept even though the arm64/x86_64
+      # architecture mismatch above turned out to be the actual root cause
+      # (Metro's log and Maestro's failure screenshot are what proved it
+      # wasn't a Metro-reachability problem: the log showed a normally-up
+      # dev server, and the screenshot showed the emulator's home screen,
+      # not the app stuck on any kind of loading/error state).
       - name: Dump Metro log
         if: always()
         run: tail -n 200 metro.log || echo "no metro.log found"
-      # Maestro saves a screenshot + UI hierarchy dump at the exact failure
-      # instant to ~/.maestro/tests/<run>/ — uploading it as a build artifact
-      # is the only way to see what's actually on screen (stuck on Metro's
-      # red "Unable to load script" screen vs. a blank/loading screen vs.
-      # something else entirely) instead of inferring it from logs alone.
       - name: Upload Maestro debug artifacts
         if: always()
         uses: actions/upload-artifact@v4

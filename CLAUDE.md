@@ -263,12 +263,46 @@ t('...')}` (both string-typed branches). Fix is the same either way:
   values via the step's `env:` rather than interpolating `${{ }}` into the
   script text.
 
+- **CI's e2e job kept failing the same `assertVisible: 'Movies'` assertion
+  through three different fixes (Metro not running, timeout too short)
+  before finding the actual cause.** The real one: `android/gradle.properties`
+  sets `reactNativeArchitectures=arm64-v8a` (a local-machine speed
+  optimization for this repo's Apple Silicon dev environment), and CI's
+  `Build debug APK` step ran plain `./gradlew assembleDebug` with no
+  override — silently producing an arm64-v8a-only APK. CI's emulator runs
+  `arch: x86_64`. The APK _installs_ fine (`adb install` succeeded every
+  time, no `INSTALL_FAILED_NO_MATCHING_ABIS` — the system image apparently
+  tolerates it, maybe via ARM translation) but has no matching native
+  libraries (Hermes, Reanimated, ...) to actually run, so the app crashes
+  back to the home screen immediately on launch. No `extendedWaitUntil`
+  timeout length could ever fix that — "Movies" was never going to appear,
+  the app was never in the foreground at all. This was **not** visible from
+  Maestro's own log (`Launch app... COMPLETED` looks identical whether the
+  app is genuinely running or crashed instantly, since `launchApp` just
+  confirms the `am start` intent was issued, not that the app stayed up)
+  and not visible from Metro's log either (a real, correctly-configured dev
+  server, completely irrelevant to this bug). What finally proved it:
+  downloading Maestro's own failure screenshot (`actions/upload-artifact`
+  on `~/.maestro/tests/`, see the e2e job's steps) — it showed the
+  emulator's home screen, not the app in any state whatsoever. Fix:
+  `./gradlew assembleDebug -PreactNativeArchitectures=x86_64` in CI,
+  matching the README's already-documented override for exactly this
+  local-arch-vs-target-arch mismatch, just never applied to the CI
+  workflow when the local `gradle.properties` default was restricted.
+  Lesson: for any CI Android-emulator failure where the app never appears
+  at all (not a slow render, not a wrong-screen render — an entirely absent
+  app), check native library ABI match before chasing anything else;
+  a Maestro/Metro log can look completely healthy while missing this
+  entirely, and a downloaded failure screenshot settles it in one look
+  where several rounds of log-reading couldn't.
+
 ## Environment specifics (this machine)
 
 - Android SDK: `~/Library/Android/sdk` (not the Homebrew location — there
   was a duplicate install early on, since cleaned up). `adb`/emulator tools
   need `export PATH="$HOME/Library/Android/sdk/platform-tools:$PATH"` if
   not already on `PATH` in a given shell.
-- No Xcode on this machine — iOS is unverified here (see README's known
-  limitations). `npx react-native doctor` confirms current toolchain state
-  if something seems off.
+- Xcode 26.6 installed and working (`/Applications/Xcode.app`), added
+  partway through development — the app has been built and verified live
+  on an iOS 26.5 simulator. `npx react-native doctor` confirms current
+  toolchain state if something seems off.

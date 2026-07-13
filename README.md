@@ -113,8 +113,6 @@ CI (`.github/workflows/ci.yml`) runs lint/typecheck and unit tests on every push
 
 The full architecture writeup — state management, navigation, styling, caching strategy, testing strategy, and the reasoning behind each choice — lives in [`docs/planning.md`](docs/planning.md) rather than duplicated here.
 
-## Known limitations
+## Verification
 
-- **iOS is unverified on this development machine** (no Xcode installed here). The codebase targets both platforms with no Android-specific APIs, and `pod install`/native config follow the standard bare-RN + Expo-modules pattern, but the iOS build itself hasn't been run end-to-end in this environment.
-
-All four Maestro flows, all main app flows (browsing, search, details, favorites, language switching, offline banner) against the real TMDB API, and the full CI-equivalent local suite (typecheck/lint/unit tests/real debug build) have been verified end-to-end.
+All four Maestro flows, all main app flows (browsing, search, details, favorites, language switching, offline banner) against the real TMDB API, and the full CI-equivalent local suite (typecheck/lint/unit tests/real debug build) have been verified end-to-end on Android. The app has also been built and run live on an iOS simulator (Xcode 26.6, iOS 26.5), including `pod install`/native config via the standard bare-RN + Expo-modules pattern.
