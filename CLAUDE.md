@@ -205,6 +205,32 @@ t('...')}` (both string-typed branches). Fix is the same either way:
   fix needed. When retaking a screenshot, navigate in and wait ~4s before
   capturing, not immediately after the tap.
 
+- **CI's `npm ci` failed on every run since the workflow was added — never
+  caught locally.** Two stacked causes: (1) `expo-modules-core` peer-
+  requires `react-native-worklets@"^0.7.4 || ^0.8.0"`, but this project
+  uses `0.10.2` (required by `reanimated@4.5.1`) — a real, unresolved
+  peer conflict that only `npm install` (not `npm ci`) tolerates, and
+  only leniently on newer npm; (2) `package-lock.json` had independently
+  drifted from a fresh resolution (`@emnapi/core` moved 1.10.0 → 1.11.2
+  upstream). Local verification never caught either because `node_modules`
+  here was built up incrementally across many `npm install <pkg>` calls,
+  never a clean install — which is exactly what `npm ci` always does.
+  Fixed with `.npmrc` (`legacy-peer-deps=true`) plus a regenerated lock
+  file. Lesson: `npm install` succeeding locally is not evidence `npm ci`
+  succeeds — verify with a real `npm ci` in an isolated directory
+  (`cp package.json package-lock.json .npmrc <tmp> && cd <tmp> && npm ci`)
+  before trusting a lockfile/peer-dep fix.
+
+- **`reactivecircus/android-emulator-runner`'s `script:` input flattens a
+  multi-line block in a way that lets an inline `#` comment swallow
+  everything after it — including a later `fi`.** Manifested as `sh -c
+... Syntax error: end of file unexpected (expecting "fi")`, with the
+  actual `if`/`fi` looking completely correct on inspection — the real
+  cause (a `# Run one flow at a time...` comment a few lines above the
+  `fi`) isn't visible from the error alone. Fix: no inline `#` comments
+  inside this action's `script:` block; put the explanation in a real
+  YAML comment above the step instead.
+
 ## Environment specifics (this machine)
 
 - Android SDK: `~/Library/Android/sdk` (not the Homebrew location — there

@@ -71,6 +71,16 @@ jobs:
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
+      # Run one flow at a time (below) rather than `maestro test .maestro/`:
+      # all four flows share the same appId, and pointing Maestro at the
+      # whole directory runs them concurrently against this one emulator,
+      # racing each other for the same app instance.
+      #
+      # No inline `#` comments inside the script: block below — the
+      # android-emulator-runner action flattens this multi-line script in a
+      # way that lets a `#` comment swallow the rest of the script (the
+      # trailing `fi` included), producing a confusing "end of file
+      # unexpected" shell syntax error with no obvious cause in the log.
       - name: Boot emulator and run Maestro flows
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -84,10 +94,6 @@ jobs:
               echo "TMDB_ACCESS_TOKEN not set — running only the flow that doesn't call the TMDB API"
               maestro test .maestro/language-switch.yaml
             else
-              # Run one flow at a time rather than `maestro test .maestro/`:
-              # all four flows share the same appId, and pointing Maestro at
-              # the whole directory runs them concurrently against this one
-              # emulator, racing each other for the same app instance.
               for flow in .maestro/*.yaml; do
                 maestro test "$flow"
               done
