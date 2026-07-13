@@ -1,6 +1,9 @@
 # Switches language via LanguageSwitcher and verifies known UI text changes
-# accordingly, then switches back. Doesn't touch the TMDB API, so unlike the
-# other flows this one passes regardless of TMDB_ACCESS_TOKEN.
+# accordingly, then restarts the app (without clearing state) to confirm the
+# choice survives a cold start instead of reverting to the device default
+# (see languagePreference.ts/useRestoreLanguagePreference.ts). Doesn't touch
+# the TMDB API, so unlike the other flows this one passes regardless of
+# TMDB_ACCESS_TOKEN.
 appId: com.mango.moviesapp
 ---
 - launchApp
@@ -9,5 +12,11 @@ appId: com.mango.moviesapp
     timeout: 20000
 - tapOn: 'ES'
 - assertVisible: 'Películas'
+- stopApp
+- launchApp:
+    clearState: false
+- extendedWaitUntil:
+    visible: 'Películas'
+    timeout: 20000
 - tapOn: 'EN'
 - assertVisible: 'Movies'
