@@ -221,15 +221,23 @@ t('...')}` (both string-typed branches). Fix is the same either way:
   (`cp package.json package-lock.json .npmrc <tmp> && cd <tmp> && npm ci`)
   before trusting a lockfile/peer-dep fix.
 
-- **`reactivecircus/android-emulator-runner`'s `script:` input flattens a
-  multi-line block in a way that lets an inline `#` comment swallow
-  everything after it — including a later `fi`.** Manifested as `sh -c
-... Syntax error: end of file unexpected (expecting "fi")`, with the
-  actual `if`/`fi` looking completely correct on inspection — the real
-  cause (a `# Run one flow at a time...` comment a few lines above the
-  `fi`) isn't visible from the error alone. Fix: no inline `#` comments
-  inside this action's `script:` block; put the explanation in a real
-  YAML comment above the step instead.
+- **`reactivecircus/android-emulator-runner`'s `script:` input does not run
+  a multi-line block as one cohesive script — it runs each line as its own
+  independent `sh -c` invocation.** An `if`/`for` spanning multiple lines
+  then has no way to find its `fi`/`done`: `sh -c if [ -z "" ]; then` fails
+  with `Syntax error: end of file unexpected (expecting "fi")` as a
+  standalone command, logged as a separate `[command]` entry immediately
+  after a different, successful `sh -c adb install ...` — two independent
+  single-line invocations, not one script, even though the YAML's `if`/`fi`
+  looks completely correct on inspection. First suspected (wrong) an inline
+  `#` comment swallowing the `fi`; removing the comment alone did not fix
+  it — same exact error on the next run, which is what proved the real
+  cause. Fix: don't put multi-line shell control flow directly in this
+  action's `script:` input at all; extract it to a real script file
+  (`.github/scripts/run-e2e-flows.sh`) and call it with
+  `script: bash .github/scripts/run-e2e-flows.sh`, passing any needed
+  values via the step's `env:` rather than interpolating `${{ }}` into the
+  script text.
 
 ## Environment specifics (this machine)
 
