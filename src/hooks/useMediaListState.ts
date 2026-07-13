@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 
-import type { SortBy } from '@/api/tmdbApi';
+import type { SortBy } from '@/api';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 
 export const INITIAL_PAGE = 1;

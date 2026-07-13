@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 
-import { useGetPopularMoviesQuery, useSearchMoviesQuery } from '@/api/tmdbApi';
+import { useGetPopularMoviesQuery, useSearchMoviesQuery } from '@/api';
 import { useActiveLocale } from '@/hooks/useActiveLocale';
 import { useMediaListScreen } from '@/hooks/useMediaListScreen';
 import { useMediaListState } from '@/hooks/useMediaListState';

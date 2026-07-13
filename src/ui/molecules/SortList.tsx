@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 
-import type { SortBy } from '@/api/tmdbApi';
+import type { SortBy } from '@/api';
 
 const SORT_OPTIONS: SortBy[] = ['popularity', 'rating', 'newest', 'title'];
 

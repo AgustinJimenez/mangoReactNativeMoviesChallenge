@@ -4,7 +4,7 @@ import { createAppStore } from '@/store';
 import { toggleFavorite } from '@/store/favoritesSlice';
 
 // Mirrors offlineCache.integration.test.tsx's two-session pattern, but for
-// favoritesSlice instead of tmdbApi's query cache — store/index.ts's
+// favoritesSlice instead of the api's query cache — store/index.ts's
 // persistConfig.whitelist includes both, so a user's favorites need to
 // survive a real app restart exactly the same way the movie list cache
 // does. That was previously unverified: favoritesSlice.test.ts only

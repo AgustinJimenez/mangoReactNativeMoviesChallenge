@@ -61,7 +61,7 @@ export const DetailsTemplate = ({
 
   // Only blocks with a full-page ErrorState when there's truly nothing
   // cached to show — a background refetch failing while stale data is
-  // already on screen (see refetchOnMountOrArgChange in tmdbApi.ts) just
+  // already on screen (see refetchOnMountOrArgChange in api/index.ts) just
   // handled below instead, same pattern as ListTemplate.
   if (!media) {
     return <ErrorState status={errorStatus} onRetry={onRetry} />;

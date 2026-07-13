@@ -1,6 +1,6 @@
 import { memo } from 'react';
 
-import { useGetMovieDetailsQuery, useGetTvDetailsQuery } from '@/api/tmdbApi';
+import { useGetMovieDetailsQuery, useGetTvDetailsQuery } from '@/api';
 import { useActiveLocale } from '@/hooks/useActiveLocale';
 import type { FavoriteEntry } from '@/store/favoritesSlice';
 import type { Media } from '@/types/media';

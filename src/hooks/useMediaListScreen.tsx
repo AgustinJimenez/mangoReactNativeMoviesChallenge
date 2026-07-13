@@ -64,7 +64,7 @@ export const useMediaListScreen = ({
   }, [data, state]);
 
   // setPage(INITIAL_PAGE) alone forces a refetch via forceRefetch's
-  // page-changed check (see getPopularMovies/searchMovies in tmdbApi.ts) —
+  // page-changed check (see getPopularMovies/searchMovies in api/index.ts) —
   // but only when page actually changes. If the user pulls to refresh while
   // already on page 1, the state setter would be a no-op and nothing would
   // refetch, so that case calls refetch() directly instead.

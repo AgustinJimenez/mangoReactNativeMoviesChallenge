@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
 
-import type { SortBy } from '@/api/tmdbApi';
+import type { SortBy } from '@/api';
 import { colors } from '@/theme/tokens';
 import type { MediaType } from '@/types/common';
 import { GenreChips } from '@/ui/molecules/GenreChips';

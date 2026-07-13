@@ -331,7 +331,7 @@ const REFETCH_STALE_AFTER_SECONDS = 300;
 // very first field access (`movie.id`) then throws, which RTK Query logs as
 // an "unhandled error" and surfaces a much less useful message than the
 // normal FETCH_ERROR/isError path every screen already renders ErrorState/
-// the stale-data notice for. Exported for direct testing — see tmdbApi.test.ts.
+// the stale-data notice for. Exported for direct testing — see api/index.test.ts.
 const HTTP_OK_MIN = 200;
 const HTTP_OK_MAX = 299;
 

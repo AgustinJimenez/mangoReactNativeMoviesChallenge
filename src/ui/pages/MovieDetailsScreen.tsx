@@ -1,7 +1,7 @@
 import { useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
 
-import { useGetMovieDetailsQuery } from '@/api/tmdbApi';
+import { useGetMovieDetailsQuery } from '@/api';
 import { useActiveLocale } from '@/hooks/useActiveLocale';
 import { useMediaDetailsScreen } from '@/hooks/useMediaDetailsScreen';
 import { ROUTES } from '@/navigation/routes';

@@ -12,7 +12,7 @@ import {
   persistStore,
 } from 'redux-persist';
 
-import { api } from '@/api/tmdbApi';
+import { api } from '@/api';
 import { favoritesSlice } from '@/store/favoritesSlice';
 
 type ApiState = ReturnType<typeof api.reducer>;

@@ -33,20 +33,20 @@ export type MediaDetails = Media & {
   releaseDate: string;
   backdropPath: string | null;
   // TV doesn't have a single "runtime" field in TMDB (episodes vary) — see
-  // tmdbApi.ts's tvDetailsToMediaDetails, which takes the first episode's
+  // api/index.ts's tvDetailsToMediaDetails, which takes the first episode's
   // runtime as an approximation. null when TMDB has no runtime data at all
   // (common for just-announced titles).
   runtimeMinutes: number | null;
   // Capped to a handful of top-billed members (see MAX_CAST_MEMBERS in
-  // tmdbApi.ts) — this is a details-page cast strip, not a full credits list.
+  // api/index.ts) — this is a details-page cast strip, not a full credits list.
   cast: CastMember[];
   // First YouTube trailer TMDB returns for this title, or null if none
   // exists yet — TrailerSection doesn't render at all in that case, see
-  // findTrailerKey in tmdbApi.ts for the selection logic.
+  // findTrailerKey in api/index.ts for the selection logic.
   trailerKey: string | null;
   recommendations: Media[];
   // Age rating (e.g. "PG-13", "R", "16") for the region matching the active
   // locale — null when TMDB has no certification on file for that region.
-  // See findMovieCertification/findTvCertification in tmdbApi.ts.
+  // See findMovieCertification/findTvCertification in api/index.ts.
   certification: string | null;
 };

@@ -111,7 +111,7 @@ exist`, every call, silently.** Cause: `expo-image` transitively loads
   page fetches (worse once `sort_by`/`with_genres` are in play — plain
   `popularity.desc` on page 1 is more stable than e.g. `vote_average.desc`
   where many items tie), so the same item can land on two different pages
-  of the same paginated request. `tmdbApi.ts`'s `merge` functions
+  of the same paginated request. `api/index.ts`'s `merge` functions
   concatenated pages with a plain `.push(...newResponse.results)`, so a
   repeated id became a repeated React key. Fixed by `mergePaginatedResults`
   (shared by all four list/search endpoints), which drops any incoming

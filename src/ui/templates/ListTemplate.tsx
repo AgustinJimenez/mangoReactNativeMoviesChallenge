@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 import type { ListRenderItem } from 'react-native';
 
-import type { SortBy } from '@/api/tmdbApi';
+import type { SortBy } from '@/api';
 import type { MediaType } from '@/types/common';
 import { RefreshIndicator } from '@/ui/atoms/RefreshIndicator';
 import { ListHeader } from '@/ui/molecules/ListHeader';
@@ -28,7 +28,7 @@ type ListTemplateProps<T> = {
   subtitle?: string;
   // Genre filter + sort only apply to the /discover-backed popular list —
   // TMDB's search endpoint doesn't accept with_genres/sort_by (see
-  // tmdbApi.ts), so these are hidden below whenever a search is active,
+  // api/index.ts), so these are hidden below whenever a search is active,
   // and are simply omitted by callers (FavoritesScreen) that don't have
   // them at all.
   mediaType?: MediaType;

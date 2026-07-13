@@ -8,7 +8,7 @@ import {
   toTvSortByParam,
   tvDetailsToMediaDetails,
   tvToMedia,
-} from '@/api/tmdbApi';
+} from '@/api';
 import type {
   SortBy,
   TmdbMovieDetails,
@@ -16,7 +16,7 @@ import type {
   TmdbPaginatedResponse,
   TmdbTvDetails,
   TmdbTvSummary,
-} from '@/api/tmdbApi';
+} from '@/api';
 import type { PaginatedResponse } from '@/types/common';
 import type { Media } from '@/types/media';
 

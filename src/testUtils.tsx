@@ -6,7 +6,7 @@ import { I18nextProvider } from 'react-i18next';
 import { SafeAreaInsetsContext } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
 
-import { api } from '@/api/tmdbApi';
+import { api } from '@/api';
 import { i18next } from '@/i18n';
 import { favoritesSlice } from '@/store/favoritesSlice';
 

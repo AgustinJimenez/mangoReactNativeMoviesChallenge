@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { View } from 'react-native';
 
-import type { SortBy } from '@/api/tmdbApi';
+import type { SortBy } from '@/api';
 import type { MediaType } from '@/types/common';
 import { FiltersModal } from '@/ui/molecules/FiltersModal';
 import { SearchBar } from '@/ui/molecules/SearchBar';
@@ -21,7 +21,7 @@ type SearchAndFiltersProps = {
   onSearchChange: (text: string) => void;
   // Only passed for the /discover-backed popular list, and only while not
   // searching (TMDB's search endpoint doesn't support with_genres/sort_by
-  // — see tmdbApi.ts). When undefined, SearchBar renders with no filter
+  // — see api/index.ts). When undefined, SearchBar renders with no filter
   // icon at all instead of one that would do nothing.
   filters?: FiltersConfig;
 };
