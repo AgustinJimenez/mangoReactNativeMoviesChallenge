@@ -39,6 +39,12 @@ module.exports = {
 
     // Tailwind / NativeWind
     'tailwindcss/no-contradicting-classname': 'error',
+    // classnames-order off: prettier-plugin-tailwindcss (see .prettierrc.js)
+    // already owns sorting on every format, and its canonical order for a
+    // NativeWind platform variant like `ios:` disagrees with this rule's —
+    // each --fix pass just gets undone by the next prettier --write,
+    // producing a warning that never actually goes away.
+    'tailwindcss/classnames-order': 'off',
 
     // Accessibility — plugin:react-native-a11y/basic defaults everything to
     // 'error'; downgraded to 'warn' so it's visible but not blocking (see
