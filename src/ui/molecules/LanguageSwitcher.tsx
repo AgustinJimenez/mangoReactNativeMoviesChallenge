@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 
+import { saveLanguage } from '@/i18n/languagePreference';
 import type { Locale } from '@/types/common';
 
 const LOCALES: Locale[] = ['es', 'en'];
@@ -22,7 +23,14 @@ export const LanguageSwitcher = () => {
         return (
           <Pressable
             key={locale}
-            onPress={() => i18n.changeLanguage(locale)}
+            onPress={() => {
+              i18n.changeLanguage(locale);
+              // Remembers the choice across restarts (see
+              // useRestoreLanguagePreference) — i18next's own device-locale
+              // detection re-runs fresh on every launch and never persists
+              // a manual override on its own.
+              saveLanguage(locale);
+            }}
             accessibilityRole="button"
             accessibilityLabel={locale}
             accessibilityHint={t('languageSwitcher.hint')}

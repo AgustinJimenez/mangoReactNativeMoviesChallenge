@@ -7,6 +7,7 @@ import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-c
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 
+import { useRestoreLanguagePreference } from '@/hooks/useRestoreLanguagePreference';
 import { i18next } from '@/i18n';
 import { persistor, store } from '@/store';
 import { LoadingState } from '@/ui/molecules/LoadingState';
@@ -22,6 +23,17 @@ const styles = StyleSheet.create({
 });
 
 export const AppProviders = ({ children }: AppProvidersProps) => {
+  // Gates rendering the same way PersistGate does just below, so a
+  // previously-saved language choice (see useRestoreLanguagePreference)
+  // applies before first paint instead of flashing the device-detected
+  // language for a frame first.
+  const isLanguageReady = useRestoreLanguagePreference();
+  const content = isLanguageReady ? (
+    <NavigationContainer>{children}</NavigationContainer>
+  ) : (
+    <LoadingState />
+  );
+
   return (
     <GestureHandlerRootView style={styles.flex1}>
       {/* initialWindowMetrics avoids a first-paint layout glitch on Android
@@ -31,9 +43,7 @@ export const AppProviders = ({ children }: AppProvidersProps) => {
       <SafeAreaProvider initialMetrics={initialWindowMetrics}>
         <Provider store={store}>
           <PersistGate loading={<LoadingState />} persistor={persistor}>
-            <I18nextProvider i18n={i18next}>
-              <NavigationContainer>{children}</NavigationContainer>
-            </I18nextProvider>
+            <I18nextProvider i18n={i18next}>{content}</I18nextProvider>
           </PersistGate>
         </Provider>
       </SafeAreaProvider>

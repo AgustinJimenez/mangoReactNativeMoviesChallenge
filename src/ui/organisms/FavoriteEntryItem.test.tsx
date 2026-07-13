@@ -1,10 +1,12 @@
+import { waitFor } from '@testing-library/react-native';
+
 import type { FavoriteEntry } from '@/store/favoritesSlice';
 import { renderWithProviders } from '@/testUtils';
 import { FavoriteEntryItem } from '@/ui/organisms/FavoriteEntryItem';
 
-const jsonResponse = (body: unknown): Response =>
+const jsonResponse = (body: unknown, status = 200): Response =>
   new Response(JSON.stringify(body), {
-    status: 200,
+    status,
     headers: { 'Content-Type': 'application/json' },
   });
 
@@ -48,5 +50,33 @@ describe('FavoriteEntryItem', () => {
     );
 
     expect(await findByText('Fight Club')).toBeTruthy();
+  });
+
+  it('renders nothing (not an error row) when the favorited title fails to resolve — e.g. deleted from TMDB', async () => {
+    jest.mocked(globalThis.fetch).mockResolvedValue(
+      jsonResponse(
+        {
+          status_code: 34,
+          status_message: 'The resource you requested could not be found.',
+          success: false,
+        },
+        404,
+      ),
+    );
+
+    const { toJSON, store } = renderWithProviders(
+      <FavoriteEntryItem entry={ENTRY} onPress={() => {}} />,
+    );
+
+    // toJSON() is null both while loading and once genuinely failed, so
+    // this waits for the query to actually settle as rejected (via store
+    // state directly) before asserting — otherwise a false pass could just
+    // be catching the loading state instead of proving the failure path.
+    await waitFor(() => {
+      const queries = Object.values(store.getState().api.queries);
+      expect(queries.some((query) => query?.status === 'rejected')).toBe(true);
+    });
+
+    expect(toJSON()).toBeNull();
   });
 });
