@@ -178,6 +178,23 @@ t('...')}` (both string-typed branches). Fix is the same either way:
   ScrollView needs explicit `zIndex`/`elevation` to be sure, even though
   normal RN sibling order would otherwise make that unnecessary.
 
+- **Metro doesn't pick up `.env` changes on a plain app reload — it needs
+  its own restart.** Force-stopping and relaunching the app (or a JS
+  reload) keeps serving whatever `react-native-dotenv` baked in at the
+  _first_ transform of `env.ts`/`@env`, even after the `.env` file's
+  content genuinely changed on disk. Confirmed by fetching Metro's served
+  bundle directly (`curl localhost:8081/index.bundle?platform=android...`)
+  and grepping for `tmdbAccessToken` — it kept showing the old value
+  through several force-stop+relaunch cycles. Fix: kill and restart the
+  `react-native start` process itself (`--reset-cache` to be extra sure)
+  whenever testing a `.env` value change, not just reload the app. Missing
+  `TMDB_ACCESS_TOKEN` entirely (or an empty `.env`) is otherwise handled
+  gracefully — `react-native-dotenv`'s `allowUndefined: true` default
+  means no build error, requests just go out as `Bearer undefined`, TMDB
+  replies 401, and the app already shows "Check your TMDB API key in the
+  .env file" for exactly this case (verified live, not just from
+  `errorState.unauthorized`'s code path).
+
 ## Environment specifics (this machine)
 
 - Android SDK: `~/Library/Android/sdk` (not the Homebrew location — there
