@@ -7,6 +7,12 @@
 # successful `sh -c adb install ...`). A real script file sidesteps that entirely.
 set -euo pipefail
 
+# The emulator reaches the host's Metro (started in the "Start Metro" step)
+# through this loopback, same as the adb reverse a physical USB device needs
+# — the emulator's own 10.0.2.2 alias isn't reliable to depend on across
+# emulator/action versions, so set this up explicitly rather than assuming it.
+adb reverse tcp:8081 tcp:8081
+
 adb install -r android/app/build/outputs/apk/debug/app-debug.apk
 
 if [ -z "${TMDB_ACCESS_TOKEN:-}" ]; then

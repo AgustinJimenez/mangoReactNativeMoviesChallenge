@@ -85,15 +85,31 @@ exist`, every call, silently.** Cause: `expo-image` transitively loads
   still occasionally fail this same assertion even though the very next
   retry (and a screenshot taken at the failure instant) shows the text
   fully rendered — that's emulator/Maestro flakiness, not app state; retry
-  once before treating it as a regression. On GitHub Actions CI
-  specifically this wasn't just occasional flakiness though: two
-  consecutive runs both failed with an identical ~25s gap between
-  `Launch app... COMPLETED` and the assertion failing, against a 20000ms
-  `extendedWaitUntil` timeout — genuinely not enough headroom, not a race.
-  GitHub's hosted runners emulate Android through nested virtualization,
-  measurably slower to first-render than a local Mac's emulator/simulator.
-  Bumped every flow's `extendedWaitUntil` timeout from 20000 to 40000 to
-  give real margin there.
+  once before treating it as a regression.
+
+  On GitHub Actions CI, the very first e2e run to get this far failed
+  the same assertion with a ~25s gap between `Launch app... COMPLETED`
+  and the assertion failing (against the 20000ms timeout above), which
+  first read as "CI's emulator is just slower, needs more headroom" —
+  bumped every flow's timeout 20000 → 40000. The **next** run failed
+  the identical assertion again, this time with a ~43s gap — already
+  exceeding the doubled timeout, which is what proved the timeout
+  theory wrong rather than just needing round three. The real cause:
+  nothing in `ci.yml` ever started Metro. A debug APK has no embedded
+  JS bundle (`debuggableVariants` defaults to `["debug",
+"debugOptimized"]` in `android/app/build.gradle`) — it loads from
+  Metro at runtime same as any local debug build. `adb install` +
+  `launchApp` "succeeded" while the app was actually stuck on the red
+  "Unable to load script" screen the entire time; no `extendedWaitUntil`
+  length could ever make "Movies" appear on that screen. Fixed by
+  starting Metro as a background step before the emulator boots
+  (polling `curl http://localhost:8081/status` for
+  `packager-status:running` before proceeding) and `adb reverse
+tcp:8081 tcp:8081` inside `run-e2e-flows.sh` before `adb install` —
+  same pattern this session already confirmed works for a physical USB
+  device, not just an emulator. Left the 40000ms timeouts in place
+  since they're a reasonable margin regardless once the bundle actually
+  loads.
 
 - **A `horizontal` `FlatList` with no bounded height silently stretches to
   fill whatever vertical space its flex ancestors leave available,** and

@@ -71,6 +71,27 @@ jobs:
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
+      # A debug APK has no embedded JS bundle (debuggableVariants defaults to
+      # ["debug", "debugOptimized"] in android/app/build.gradle) — it loads
+      # from Metro at runtime, same as a local debug build. Nothing in this
+      # job started Metro before this was added, so `adb install` +
+      # `launchApp` "succeeded" while the app was actually stuck on the red
+      # "Unable to load script" screen the whole time — no `extendedWaitUntil`
+      # timeout length could ever fix that, which is why bumping it 20s->40s
+      # still failed (just took longer to time out).
+      - name: Start Metro
+        run: |
+          npx react-native start > metro.log 2>&1 &
+          for _ in $(seq 1 30); do
+            if curl -s http://localhost:8081/status | grep -q "packager-status:running"; then
+              echo "Metro is up"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Metro did not become ready in time" >&2
+          cat metro.log
+          exit 1
       # The if/for logic lives in .github/scripts/run-e2e-flows.sh, not
       # inline here — reactivecircus/android-emulator-runner's script: input
       # does not execute a multi-line block as one cohesive script, it runs
