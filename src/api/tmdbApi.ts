@@ -324,6 +324,20 @@ type MediaDetailsArgs = {
 // catches "came back to the app later" the way redux-persist is meant to.
 const REFETCH_STALE_AFTER_SECONDS = 300;
 
+// A flaky connection (network drops mid-request, then the fetch resolves
+// anyway) can occasionally yield a 200 response with a null body instead of
+// a proper network error. Without rejecting it here, that null body reaches
+// transformResponse as-is — movieDetailsToMediaDetails/tvDetailsToMediaDetails's
+// very first field access (`movie.id`) then throws, which RTK Query logs as
+// an "unhandled error" and surfaces a much less useful message than the
+// normal FETCH_ERROR/isError path every screen already renders ErrorState/
+// the stale-data notice for. Exported for direct testing — see tmdbApi.test.ts.
+const HTTP_OK_MIN = 200;
+const HTTP_OK_MAX = 299;
+
+export const isValidTmdbResponse = (response: Response, body: unknown): boolean =>
+  response.status >= HTTP_OK_MIN && response.status <= HTTP_OK_MAX && body != null;
+
 export const tmdbApi = createApi({
   reducerPath: 'tmdbApi',
   refetchOnMountOrArgChange: REFETCH_STALE_AFTER_SECONDS,
@@ -333,6 +347,7 @@ export const tmdbApi = createApi({
       headers.set('Authorization', `Bearer ${env.tmdbAccessToken}`);
       return headers;
     },
+    validateStatus: isValidTmdbResponse,
   }),
   endpoints: (builder) => ({
     getPopularMovies: builder.query<PaginatedResponse<Media>, MediaListArgs>({

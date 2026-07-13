@@ -94,4 +94,16 @@ describe('MovieDetailsScreen', () => {
 
     await waitFor(() => expect(getByText('Check your TMDB API key in the .env file')).toBeTruthy());
   });
+
+  it('shows the generic error state instead of crashing on a 200 response with a null body', async () => {
+    // A flaky connection can occasionally resolve a request with a 200
+    // status and a null body instead of a proper network error — without
+    // isValidTmdbResponse rejecting it, movieDetailsToMediaDetails's very
+    // first field access (movie.id) throws on the null body.
+    jest.mocked(globalThis.fetch).mockResolvedValue(jsonResponse(null));
+
+    const { getByText } = renderMovieDetailsScreen();
+
+    await waitFor(() => expect(getByText("We couldn't load this content")).toBeTruthy());
+  });
 });

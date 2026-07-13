@@ -1,4 +1,5 @@
 import {
+  isValidTmdbResponse,
   mergePaginatedResults,
   movieDetailsToMediaDetails,
   movieToMedia,
@@ -293,6 +294,22 @@ describe('toTvSortByParam', () => {
   it('uses a tv-specific date field, unlike movies', () => {
     const sortBy: SortBy = 'newest';
     expect(toTvSortByParam(sortBy)).not.toBe(toMovieSortByParam(sortBy));
+  });
+});
+
+describe('isValidTmdbResponse', () => {
+  const okResponse = { status: 200 } as Response;
+
+  it('accepts a 2xx response with a real body', () => {
+    expect(isValidTmdbResponse(okResponse, { id: 550 })).toBe(true);
+  });
+
+  it('rejects a 2xx response with a null body (flaky-connection edge case)', () => {
+    expect(isValidTmdbResponse(okResponse, null)).toBe(false);
+  });
+
+  it('rejects a non-2xx response regardless of body', () => {
+    expect(isValidTmdbResponse({ status: 401 } as Response, { id: 550 })).toBe(false);
   });
 });
 
