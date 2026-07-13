@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
-import { ScrollView, Text } from 'react-native';
+import { RefreshControl, ScrollView, Text } from 'react-native';
 
+import { colors } from '@/theme/tokens';
 import type { Media, MediaDetails } from '@/types/media';
 import { RefreshIndicator } from '@/ui/atoms/RefreshIndicator';
 import { ErrorState } from '@/ui/molecules/ErrorState';
@@ -49,8 +50,27 @@ export const DetailsTemplate = ({
   // transparent nav header keeps floating directly over the image (see
   // screenOptions.tsx); putting anything above it would push it down and
   // reintroduce the dead-space gap that design was built to remove.
+  //
+  // refreshControl reuses onRetry directly rather than taking a separate
+  // onRefresh prop the way ListBody does — ListBody's two props exist
+  // because pull-to-refresh there also resets pagination, but there's no
+  // pagination on a details screen, so retrying and refreshing are the
+  // same refetch() call. Without this, hitting the stale-data notice below
+  // left no way to recover except backing out and waiting for
+  // refetchOnMountOrArgChange's 5-minute staleness window.
   return (
-    <ScrollView className="flex-1 bg-background" contentContainerClassName="gap-lg pb-lg">
+    <ScrollView
+      className="flex-1 bg-background"
+      contentContainerClassName="gap-lg pb-lg"
+      refreshControl={
+        <RefreshControl
+          refreshing={isFetching}
+          onRefresh={onRetry}
+          tintColor={colors.primary}
+          colors={[colors.primary]}
+        />
+      }
+    >
       <MediaDetailsHeader media={media} />
       {isFetching && <RefreshIndicator />}
       {isError && (

@@ -66,13 +66,15 @@ Or, on macOS with a simulator available:
 npm run ios
 ```
 
-Android debug builds only target `x86_64` (`android/gradle.properties`'
-`reactNativeArchitectures`) — fine for the emulator, but a debug APK built
-this way won't install on a physical ARM device. Build for a physical
-device (or a release) with:
+Android debug builds only target `arm64-v8a` (`android/gradle.properties`'
+`reactNativeArchitectures`) — matches both an Apple Silicon Mac's emulator
+and most physical Android devices, but a debug APK built this way won't
+install on an `x86_64` emulator (Intel Mac/Windows/Linux) or an older
+32-bit (`armeabi-v7a`) device. Build for a different target (or a release)
+with:
 
 ```sh
-cd android && ./gradlew assembleDebug -PreactNativeArchitectures=arm64-v8a
+cd android && ./gradlew assembleDebug -PreactNativeArchitectures=x86_64
 ```
 
 ## Running tests

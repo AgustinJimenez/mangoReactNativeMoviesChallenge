@@ -1,4 +1,5 @@
 import { fireEvent } from '@testing-library/react-native';
+import { ScrollView } from 'react-native';
 
 import { renderWithProviders } from '@/testUtils';
 import type { MediaDetails } from '@/types/media';
@@ -114,5 +115,21 @@ describe('DetailsTemplate', () => {
     expect(getByText("Couldn't refresh, showing saved data")).toBeTruthy();
     expect(queryByText("We couldn't load this content")).toBeNull();
     expect(getByText('Fight Club')).toBeTruthy();
+  });
+
+  it('calls onRetry when pulled to refresh, giving a way to recover from the stale-data notice', () => {
+    // RNTL's fireEvent(el, 'refresh') only auto-forwards to a nested
+    // RefreshControl for FlatList/SectionList's own onRefresh convenience
+    // prop, not for a bare ScrollView's refreshControl element — so this
+    // reaches the same onRefresh handler the real pull gesture would call,
+    // straight off the element passed to the ScrollView's refreshControl prop.
+    const { UNSAFE_getByType: getByType, onRetry } = renderDetailsTemplate({
+      media: MOVIE_DETAILS,
+      isError: true,
+    });
+
+    getByType(ScrollView).props.refreshControl.props.onRefresh();
+
+    expect(onRetry).toHaveBeenCalled();
   });
 });
