@@ -154,6 +154,8 @@ Quedó afuera de este documento en la primera pasada — se decidió sobre la ma
 
 ### New Architecture: auditoría del resto de dependencias nativas
 
+Estado del proyecto en concreto: `newArchEnabled=true` y `hermesEnabled=true` en `android/gradle.properties` (default de RN 0.86, no una elección manual). Esto significa Fabric (renderer) + TurboModules sobre JSI — sin el bridge async/JSON-serializado de la arquitectura vieja, que además ya no existe como opción desde RN 0.82 (ver más abajo). Es la razón de fondo por la que las animaciones de UI-thread de Reanimated (`useAnimatedStyle`/`useAnimatedScrollHandler`, ver header de la pantalla de detalles) corren sin round-trips por el bridge.
+
 El problema de `react-native-fast-image` (sin soporte de Fabric) hizo evidente que hay que revisar esto para *toda* dependencia con módulo nativo del stack, no asumir que "ya viene resuelto". Estado conocido de cada una (a confirmar en la práctica en el paso 1/5 del plan, instalando e inicializando cada una contra la versión de RN CLI real):
 
 | Dependencia | Mantenedor | Riesgo esperado |
