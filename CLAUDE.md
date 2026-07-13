@@ -85,7 +85,15 @@ exist`, every call, silently.** Cause: `expo-image` transitively loads
   still occasionally fail this same assertion even though the very next
   retry (and a screenshot taken at the failure instant) shows the text
   fully rendered — that's emulator/Maestro flakiness, not app state; retry
-  once before treating it as a regression.
+  once before treating it as a regression. On GitHub Actions CI
+  specifically this wasn't just occasional flakiness though: two
+  consecutive runs both failed with an identical ~25s gap between
+  `Launch app... COMPLETED` and the assertion failing, against a 20000ms
+  `extendedWaitUntil` timeout — genuinely not enough headroom, not a race.
+  GitHub's hosted runners emulate Android through nested virtualization,
+  measurably slower to first-render than a local Mac's emulator/simulator.
+  Bumped every flow's `extendedWaitUntil` timeout from 20000 to 40000 to
+  give real margin there.
 
 - **A `horizontal` `FlatList` with no bounded height silently stretches to
   fill whatever vertical space its flex ancestors leave available,** and
