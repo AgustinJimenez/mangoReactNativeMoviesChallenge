@@ -195,6 +195,16 @@ t('...')}` (both string-typed branches). Fix is the same either way:
   .env file" for exactly this case (verified live, not just from
   `errorState.unauthorized`'s code path).
 
+- **A README screenshot taken right after navigating to the details
+  screen can catch `RefreshControl`'s native spinner mid-fetch** — a
+  plain white circle near the top of the backdrop, easy to mistake for a
+  rendering bug. `DetailsTemplate`'s `RefreshControl` uses
+  `refreshing={isFetching}` (same as list screens), so it's genuinely
+  spinning for the brief window `getMovieDetails`/`getTvDetails` is in
+  flight, then disappears on its own once the fetch settles — no code
+  fix needed. When retaking a screenshot, navigate in and wait ~4s before
+  capturing, not immediately after the tap.
+
 ## Environment specifics (this machine)
 
 - Android SDK: `~/Library/Android/sdk` (not the Homebrew location — there
