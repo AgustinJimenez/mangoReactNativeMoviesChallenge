@@ -338,8 +338,8 @@ const HTTP_OK_MAX = 299;
 export const isValidTmdbResponse = (response: Response, body: unknown): boolean =>
   response.status >= HTTP_OK_MIN && response.status <= HTTP_OK_MAX && body != null;
 
-export const tmdbApi = createApi({
-  reducerPath: 'tmdbApi',
+export const api = createApi({
+  reducerPath: 'api',
   refetchOnMountOrArgChange: REFETCH_STALE_AFTER_SECONDS,
   baseQuery: fetchBaseQuery({
     baseUrl: 'https://api.themoviedb.org/3',
@@ -467,4 +467,4 @@ export const {
   useGetPopularTvQuery,
   useSearchTvQuery,
   useGetTvDetailsQuery,
-} = tmdbApi;
+} = api;

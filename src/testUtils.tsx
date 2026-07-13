@@ -6,7 +6,7 @@ import { I18nextProvider } from 'react-i18next';
 import { SafeAreaInsetsContext } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
 
-import { tmdbApi } from '@/api/tmdbApi';
+import { api } from '@/api/tmdbApi';
 import { i18next } from '@/i18n';
 import { favoritesSlice } from '@/store/favoritesSlice';
 
@@ -24,14 +24,14 @@ const TEST_SAFE_AREA_INSETS = { top: 0, left: 0, right: 0, bottom: 0 };
 // AsyncStorage — tests don't need persistence, and pulling it in would mean
 // waiting on rehydration in every component test.
 const testRootReducer = combineReducers({
-  [tmdbApi.reducerPath]: tmdbApi.reducer,
+  [api.reducerPath]: api.reducer,
   [favoritesSlice.name]: favoritesSlice.reducer,
 });
 
 export const createTestStore = () =>
   configureStore({
     reducer: testRootReducer,
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(tmdbApi.middleware),
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(api.middleware),
   });
 
 type TestStore = ReturnType<typeof createTestStore>;
