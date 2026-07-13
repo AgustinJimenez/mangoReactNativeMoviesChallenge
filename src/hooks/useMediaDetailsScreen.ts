@@ -1,6 +1,8 @@
+import { useHeaderHeight } from '@react-navigation/elements';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback } from 'react';
+import { useSharedValue } from 'react-native-reanimated';
 
 import { useDetailsHeaderShare } from '@/hooks/useDetailsHeaderShare';
 import type { RootStackParamList } from '@/navigation/types';
@@ -31,6 +33,16 @@ export const useMediaDetailsScreen = (query: MediaDetailsQuery, detailsRoute: De
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   useDetailsHeaderShare(query.data);
 
+  // Passed down to DetailsTemplate, which updates it via a scroll handler
+  // and renders DetailsHeaderBackground off of it — starts fully
+  // transparent over the backdrop and progressively tints as the user
+  // scrolls.
+  const scrollY = useSharedValue(0);
+  // Resolved here (a real screen, mounted inside a navigator with a
+  // header) rather than inside DetailsHeaderBackground itself — see that
+  // component's comment for why.
+  const headerHeight = useHeaderHeight();
+
   const handlePressRecommendation = useCallback(
     (media: Media) => {
       navigation.push(detailsRoute, { id: media.id });
@@ -46,5 +58,7 @@ export const useMediaDetailsScreen = (query: MediaDetailsQuery, detailsRoute: De
     errorStatus: getErrorStatus(query.error),
     onRetry: query.refetch,
     onPressRecommendation: handlePressRecommendation,
+    scrollY,
+    headerHeight,
   };
 };

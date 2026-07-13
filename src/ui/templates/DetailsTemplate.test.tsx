@@ -1,9 +1,16 @@
 import { fireEvent } from '@testing-library/react-native';
 import { ScrollView } from 'react-native';
+import type { SharedValue } from 'react-native-reanimated';
 
 import { renderWithProviders } from '@/testUtils';
 import type { MediaDetails } from '@/types/media';
 import { DetailsTemplate } from '@/ui/templates/DetailsTemplate';
+
+// A plain object with a mutable `value` field structurally satisfies
+// SharedValue for tests — DetailsTemplate only ever writes to it from
+// inside a scroll handler these tests never trigger, and the real
+// useSharedValue is a hook that can't be called outside a component.
+const scrollY = { value: 0 } as SharedValue<number>;
 
 const MOVIE_DETAILS: MediaDetails = {
   id: 550,
@@ -50,6 +57,8 @@ const renderDetailsTemplate = (overrides: Partial<Parameters<typeof DetailsTempl
       isError={false}
       onRetry={onRetry}
       onPressRecommendation={onPressRecommendation}
+      scrollY={scrollY}
+      headerHeight={100}
       {...overrides}
     />,
   );

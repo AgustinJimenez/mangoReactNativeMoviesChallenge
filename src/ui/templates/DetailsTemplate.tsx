@@ -1,9 +1,13 @@
+import { cssInterop } from 'nativewind';
 import { useTranslation } from 'react-i18next';
-import { RefreshControl, ScrollView, Text } from 'react-native';
+import { RefreshControl, Text, View } from 'react-native';
+import Animated, { useAnimatedScrollHandler } from 'react-native-reanimated';
+import type { SharedValue } from 'react-native-reanimated';
 
 import { colors } from '@/theme/tokens';
 import type { Media, MediaDetails } from '@/types/media';
 import { RefreshIndicator } from '@/ui/atoms/RefreshIndicator';
+import { DetailsHeaderBackground } from '@/ui/molecules/DetailsHeaderBackground';
 import { ErrorState } from '@/ui/molecules/ErrorState';
 import { OverviewSection } from '@/ui/molecules/OverviewSection';
 import { TrailerSection } from '@/ui/molecules/TrailerSection';
@@ -11,6 +15,13 @@ import { CastList } from '@/ui/organisms/CastList';
 import { DetailsSkeleton } from '@/ui/organisms/DetailsSkeleton';
 import { MediaDetailsHeader } from '@/ui/organisms/MediaDetailsHeader';
 import { RecommendationsList } from '@/ui/organisms/RecommendationsList';
+
+// Same reasoning as expo-image/Poster.tsx: Reanimated's Animated.ScrollView
+// isn't a primitive NativeWind wraps automatically.
+cssInterop(Animated.ScrollView, {
+  className: 'style',
+  contentContainerClassName: 'contentContainerStyle',
+});
 
 type DetailsTemplateProps = {
   media: MediaDetails | undefined;
@@ -20,6 +31,12 @@ type DetailsTemplateProps = {
   errorStatus?: number;
   onRetry: () => void;
   onPressRecommendation: (media: Media) => void;
+  // Drives DetailsHeaderBackground's scroll-tinted overlay below (created
+  // in useMediaDetailsScreen.ts) — updated here on the UI thread via
+  // useAnimatedScrollHandler, so the tint tracks scroll position without
+  // any React re-renders.
+  scrollY: SharedValue<number>;
+  headerHeight: number;
 };
 
 export const DetailsTemplate = ({
@@ -30,8 +47,13 @@ export const DetailsTemplate = ({
   errorStatus,
   onRetry,
   onPressRecommendation,
+  scrollY,
+  headerHeight,
 }: DetailsTemplateProps) => {
   const { t } = useTranslation();
+  const scrollHandler = useAnimatedScrollHandler((event) => {
+    scrollY.value = event.contentOffset.y;
+  });
 
   if (isLoading) {
     return <DetailsSkeleton />;
@@ -59,32 +81,37 @@ export const DetailsTemplate = ({
   // left no way to recover except backing out and waiting for
   // refetchOnMountOrArgChange's 5-minute staleness window.
   return (
-    <ScrollView
-      className="flex-1 bg-background"
-      contentContainerClassName="gap-lg pb-lg"
-      refreshControl={
-        <RefreshControl
-          refreshing={isFetching}
-          onRefresh={onRetry}
-          tintColor={colors.primary}
-          colors={[colors.primary]}
+    <View className="flex-1">
+      <Animated.ScrollView
+        className="flex-1 bg-background"
+        contentContainerClassName="gap-lg pb-xl"
+        onScroll={scrollHandler}
+        scrollEventThrottle={16}
+        refreshControl={
+          <RefreshControl
+            refreshing={isFetching}
+            onRefresh={onRetry}
+            tintColor={colors.primary}
+            colors={[colors.primary]}
+          />
+        }
+      >
+        <MediaDetailsHeader media={media} />
+        {isFetching && <RefreshIndicator />}
+        {isError && (
+          <Text className="bg-danger/20 px-md py-xs text-center text-xs text-text">
+            {t('common.staleDataNotice')}
+          </Text>
+        )}
+        <OverviewSection overview={media.overview} />
+        <CastList cast={media.cast} />
+        <TrailerSection trailerKey={media.trailerKey} />
+        <RecommendationsList
+          recommendations={media.recommendations}
+          onPressMedia={onPressRecommendation}
         />
-      }
-    >
-      <MediaDetailsHeader media={media} />
-      {isFetching && <RefreshIndicator />}
-      {isError && (
-        <Text className="bg-danger/20 px-md py-xs text-center text-xs text-text">
-          {t('common.staleDataNotice')}
-        </Text>
-      )}
-      <OverviewSection overview={media.overview} />
-      <CastList cast={media.cast} />
-      <TrailerSection trailerKey={media.trailerKey} />
-      <RecommendationsList
-        recommendations={media.recommendations}
-        onPressMedia={onPressRecommendation}
-      />
-    </ScrollView>
+      </Animated.ScrollView>
+      <DetailsHeaderBackground scrollY={scrollY} headerHeight={headerHeight} />
+    </View>
   );
 };
