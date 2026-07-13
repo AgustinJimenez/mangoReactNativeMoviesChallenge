@@ -143,6 +143,41 @@ t('...')}` (both string-typed branches). Fix is the same either way:
   in JSX — a ternary in ordinary assignment position isn't inside a JSX
   expression container, so it's untouched by the rule.
 
+- **`useAnimatedStyle`'s result mixed into a `style={[staticStyle, animatedStyle]}`
+  array can silently drop the static object's properties** — confirmed on
+  this Reanimated version: an `Animated.View` positioned/sized via a plain
+  style object earlier in the array, with only `opacity` coming from
+  `useAnimatedStyle`, rendered nothing at all (invisible — not dim, not
+  mispositioned, genuinely absent) until every property, including the
+  static position/size ones, moved into the single object
+  `useAnimatedStyle` returns. Cost real time to isolate: opacity/color/
+  z-index were all correct in inspection, the element just never painted.
+  If an `Animated.View` isn't showing up and its animated style only sets
+  one property, suspect this before anything else — merge everything into
+  one `useAnimatedStyle` call rather than an array.
+
+- **`headerBackground` (native-stack's `screenOptions`) doesn't propagate
+  Reanimated UI-thread updates reliably.** A shared-value-driven tint set
+  via `navigation.setOptions({ headerBackground: () => <AnimatedThing /> })`
+  applied correctly once scrolling settled, but never visibly animated
+  during an active scroll gesture — `headerBackground` renders through the
+  navigator's own native header bridge, not the screen's normal React
+  tree. Fix: render the animated piece as a plain absolutely-positioned
+  sibling inside the screen's own content instead (sized via
+  `useHeaderHeight()` from `@react-navigation/elements`, passed down as a
+  prop rather than called from inside the animated component itself, so
+  that component stays testable without a real navigator context). See
+  `DetailsHeaderBackground.tsx` for the pattern.
+
+- **A `RefreshControl`-wrapped `ScrollView`/`FlatList` can render above
+  plain sibling views on Android regardless of JSX order.** On Android,
+  `refreshControl` makes `ScrollView.js` clone the `RefreshControl` element
+  as the actual root, wrapping the real scroll content — that wrapper
+  (`AndroidSwipeRefreshLayout`) appears to carry implicit elevation above
+  later plain siblings. A sibling meant to render on top of such a
+  ScrollView needs explicit `zIndex`/`elevation` to be sure, even though
+  normal RN sibling order would otherwise make that unnecessary.
+
 ## Environment specifics (this machine)
 
 - Android SDK: `~/Library/Android/sdk` (not the Homebrew location — there

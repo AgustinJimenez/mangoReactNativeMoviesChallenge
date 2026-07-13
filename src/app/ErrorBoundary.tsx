@@ -36,7 +36,12 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
   render() {
     if (this.state.error) {
-      // TODO(step 8): swap this inline fallback for ui/molecules/ErrorState once it exists.
+      // Deliberately not ui/molecules/ErrorState: that component calls
+      // useTranslation(), which needs I18nextProvider mounted — this
+      // boundary sits above it specifically to catch errors from inside
+      // the providers themselves, so its fallback can't depend on any of
+      // them being up. Reads the i18next singleton directly instead (see
+      // the class comment above).
       return (
         <View className="flex-1 items-center justify-center gap-4 bg-slate-900 p-6">
           <Text className="text-center text-lg font-bold text-white">
